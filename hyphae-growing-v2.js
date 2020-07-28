@@ -11,7 +11,7 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
     const c = document.createElement('canvas');
     c.width = width;
     c.height = height;
-    parentEl = !parentEl ? document.body : parentEl;
+    parentEl = parentEl === false ? document.body : (parentEl instanceof Element ? parentEl : document.querySelector(parentEl));
 
     parentEl.appendChild(c);
     const ctx = c.getContext("2d");
