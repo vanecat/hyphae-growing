@@ -2,7 +2,7 @@
  * If you don't see anything, then just wait a while.
  *****************************************************/
 
-function HyphaeGrowing(width, height, parentEl=false) {
+function HyphaeGrowing(width, height, config, parentEl=false) {
     const logEl = document.getElementById('log');
 
     let isRunning = false;
@@ -27,15 +27,18 @@ function HyphaeGrowing(width, height, parentEl=false) {
     };
 
 
-    const pBranchOff = 0.3; // Probability of a new branch forming at tip
-    const pBranchRandomDeath = 0.0; // Probability of a branch spontaneously stopping growing
-    const growthLengthMin = 2; // length of growth in pixels
-    const growthLengthMax = 4; // length of growth in pixels
-    const growthLengthIncrement = 2; // length of growth in pixels
-    const allowBranchOverlap = false;
-    const growthInterval = 10; // Speed of growth
-    const angleDeltaRange = 25, branchMaxCount = 4, branchGrowthMaxAttempts = 10;
-    const pixelPrecision = 1;
+    // defaults
+    if (!config.pBranchOff) config.pBranchOff = 0.3; // Probability of a new branch forming at tip
+    if (!config.pBranchRandomDeath) config.pBranchRandomDeath = 0.0; // Probability of a branch spontaneously stopping growing
+    if (!config.growthLengthMin) config.growthLengthMin = 2; // length of growth in pixels
+    if (!config.growthLengthMax) config.growthLengthMax = 4; // length of growth in pixels
+    if (!config.growthLengthIncrement) config.growthLengthIncrement = 2; // length of growth in pixels
+    if (!config.allowBranchOverlap) config.allowBranchOverlap = false;
+    if (!config.timeBetweenGrowth) config.timeBetweenGrowth = 10; // Speed of growth
+    if (!config.angleDeltaRange) config.angleDeltaRange = 25;
+    if (!config.branchMaxCount) config.branchMaxCount = 4;
+    if (!config.branchGrowthMaxAttempts) config.branchGrowthMaxAttempts = 10;
+    if (!config.pixelPrecision) config.pixelPrecision = 1;
 
     // Point at which the hyphae grows
     const growthMatrix = {};
@@ -63,7 +66,7 @@ function HyphaeGrowing(width, height, parentEl=false) {
             angle = Math.floor(Math.random() * 360);
         }
 
-        let potentialBranchCount = Math.ceil(Math.random() * branchMaxCount);
+        let potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
         let attemptedBranchCount = 0;
 
         const grow = () => {
@@ -72,20 +75,20 @@ function HyphaeGrowing(width, height, parentEl=false) {
 
             // attempts (i times)
             let hasGrownBranch = false;
-            for(let ai = 0; ai < (allowBranchOverlap ? 1 : branchGrowthMaxAttempts); ai++) {
+            for(let ai = 0; ai < (config.allowBranchOverlap ? 1 : config.branchGrowthMaxAttempts); ai++) {
                 // the new angle should add be [-angleDelta/2, +angleDelta/2]
-                newAngle = angle + (-1 * (angleDeltaRange/2)) + Math.random() * angleDeltaRange;
+                newAngle = angle + (-1 * (config.angleDeltaRange/2)) + Math.random() * config.angleDeltaRange;
 
-                const growthLength = growthLengthMin + Math.ceil(Math.random() * growthLengthMax);
-                if (allowBranchOverlap) {
-                    x1 = Math.ceil( pixelPrecision * (x + growthLength * Math.cos(newAngle)) ) / pixelPrecision;
-                    y1 = Math.ceil( pixelPrecision * (y + growthLength * Math.sin(newAngle)) ) / pixelPrecision;
+                const growthLength = config.growthLengthMin + Math.ceil(Math.random() * config.growthLengthMax);
+                if (config.allowBranchOverlap) {
+                    x1 = Math.ceil( config.pixelPrecision * (x + growthLength * Math.cos(newAngle)) ) / config.pixelPrecision;
+                    y1 = Math.ceil( config.pixelPrecision * (y + growthLength * Math.sin(newAngle)) ) / config.pixelPrecision;
                     hasGrownBranch = isWithinBounds(x1, y1);
                 } else {
                     let isFirstGrowthIncrement = true;
-                    for(let i = growthLengthIncrement; i <= growthLength; i+=growthLengthIncrement) {
-                        x1 = Math.ceil( pixelPrecision * (x + i * Math.cos(newAngle)) ) / pixelPrecision;
-                        y1 = Math.ceil( pixelPrecision * (y + i * Math.sin(newAngle)) ) / pixelPrecision;
+                    for(let i = config.growthLengthIncrement; i <= growthLength; i+=config.growthLengthIncrement) {
+                        x1 = Math.ceil( config.pixelPrecision * (x + i * Math.cos(newAngle)) ) / config.pixelPrecision;
+                        y1 = Math.ceil( config.pixelPrecision * (y + i * Math.sin(newAngle)) ) / config.pixelPrecision;
 
                         if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinBounds(x1, y1)) {
                             // no growth (bumped into other branch/frame edge on 1st try)
@@ -115,11 +118,11 @@ function HyphaeGrowing(width, height, parentEl=false) {
 
             if (hasGrownBranch) {
                 line(x1, y1, x, y);
-                if (Math.random() < pBranchOff) {
+                if (Math.random() < config.pBranchOff) {
                     // Create a new growing point from tip of branch and current angle
                     return Growth(x1, y1, newAngle);
                 } else {
-                    potentialBranchCount = Math.ceil(Math.random() * branchMaxCount);
+                    potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
                     attemptedBranchCount = 0;
                     growthCyclesWithoutBranching++;
                     x = x1;
@@ -133,7 +136,7 @@ function HyphaeGrowing(width, height, parentEl=false) {
         return {
             grow,
             isDoneGrowing: () => {
-                return (attemptedBranchCount >= potentialBranchCount) || Math.random() < (growthCyclesWithoutBranching * pBranchRandomDeath);
+                return (attemptedBranchCount >= potentialBranchCount) || Math.random() < (growthCyclesWithoutBranching * config.pBranchRandomDeath);
             }
         }
     };
@@ -160,7 +163,7 @@ function HyphaeGrowing(width, height, parentEl=false) {
                 actuallyGrowingBranches[i] = true;
             }
         }
-        for (let i in actuallyGrowingBranches) {
+        for (let i of Object.keys(actuallyGrowingBranches)) {
             const newBranch = growingBranches[i].grow();
             if (newBranch) {
                 newBranches.push(newBranch);
@@ -196,10 +199,56 @@ function HyphaeGrowing(width, height, parentEl=false) {
         if (e.keyCode === 32) {
             isRunning = !isRunning;
             if (isRunning) {
-                runningInterval = setInterval(draw, growthInterval);
+                runningInterval = setInterval(draw, config.timeBetweenGrowth);
             } else {
                 clearInterval(drawInterval);
             }
         }
     });
 }
+
+/*
+Sample config
+*/
+HyphaeGrowing.favoriteConfigs = [
+    {
+        pBranchOff : 0.3,
+        pBranchRandomDeath : 0.0,
+        growthLengthMin : 2,
+        growthLengthMax : 4,
+        growthLengthIncrement : 2,
+        allowBranchOverlap : false,
+        timeBetweenGrowth : 10,
+        angleDeltaRange : 25,
+        branchMaxCount : 4,
+        branchGrowthMaxAttempts : 10,
+        pixelPrecision : 1
+    },
+    {
+        pBranchOff : 0.4,
+        pBranchRandomDeath : 0.05,
+        growthLengthMin : 2,
+        growthLengthMax : 4,
+        growthLengthIncrement : 2,
+        allowBranchOverlap : false,
+        timeBetweenGrowth : 10,
+        angleDeltaRange : 25,
+        branchMaxCount : 4,
+        branchGrowthMaxAttempts : 10,
+        pixelPrecision : 1
+    },
+    {
+        pBranchOff : 0.3,
+        pBranchRandomDeath : 0.0,
+        growthLengthMin : 2,
+        growthLengthMax : 4,
+        growthLengthIncrement : 2,
+        allowBranchOverlap : false,
+        timeBetweenGrowth : 10,
+        angleDeltaRange : 45,
+        branchMaxCount : 4,
+        branchGrowthMaxAttempts : 10,
+        pixelPrecision : 1
+    }
+];
+/* */
