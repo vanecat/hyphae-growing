@@ -15,6 +15,8 @@ function HyphaeGrowing(width, height, config, parentEl=false) {
 
     parentEl.appendChild(c);
     const ctx = c.getContext("2d");
+    ctx.fillStyle = 'rgba(200,200,200,0)';
+    ctx.strokeStyle = config.lineColor || 'black';
 
     const line = (x1, y1, x0,y0) => {
         ctx.moveTo(x0, y0);
@@ -212,6 +214,7 @@ Sample config
 */
 HyphaeGrowing.favoriteConfigs = [
     {
+        lineColor: 'rgb(176, 137, 37)',
         pBranchOff : 0.3,
         pBranchRandomDeath : 0.0,
         growthLengthMin : 2,
@@ -225,6 +228,7 @@ HyphaeGrowing.favoriteConfigs = [
         pixelPrecision : 1
     },
     {
+        lineColor: 'rgb(176, 137, 37)',
         pBranchOff : 0.4,
         pBranchRandomDeath : 0.05,
         growthLengthMin : 2,
@@ -238,6 +242,7 @@ HyphaeGrowing.favoriteConfigs = [
         pixelPrecision : 1
     },
     {
+        lineColor: 'rgb(176, 137, 37)',
         pBranchOff : 0.3,
         pBranchRandomDeath : 0.0,
         growthLengthMin : 2,
