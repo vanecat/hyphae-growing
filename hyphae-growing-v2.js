@@ -18,6 +18,9 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
     ctx.fillStyle = 'rgba(200,200,200,0)';
     ctx.strokeStyle = config.lineColor || 'black';
 
+    // smaller of the two dimensions of canvas - a buffer
+    const hyphalRadius = Math.min(width, height) - 20;
+
     const line = (x1, y1, x0,y0) => {
         ctx.moveTo(x0, y0);
         ctx.lineTo(x1, y1);
@@ -26,6 +29,10 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
 
     const isWithinBounds = (x,y) => {
         return x >= 0 && x < width && y >= 0 && y < height;
+    };
+
+    const isWithinHyphalCircle = (x,y) => {
+        return Math.sqrt( Math.pow((x - (width/2)), 2) + Math.pow((y - (height/2)), 2) ) <= hyphalRadius;
     };
 
 
@@ -92,7 +99,7 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
                         x1 = Math.ceil( config.pixelPrecision * (x + i * Math.cos(newAngle)) ) / config.pixelPrecision;
                         y1 = Math.ceil( config.pixelPrecision * (y + i * Math.sin(newAngle)) ) / config.pixelPrecision;
 
-                        if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinBounds(x1, y1)) {
+                        if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinHyphalCircle(x1, y1)) {
                             // no growth (bumped into other branch/frame edge on 1st try)
                             if (isFirstGrowthIncrement) {
                                 //console.log('hit other growth too soon');
