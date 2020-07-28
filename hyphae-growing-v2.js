@@ -201,7 +201,7 @@ function HyphaeGrowing(width, height, config, parentEl=false) {
             if (isRunning) {
                 runningInterval = setInterval(draw, config.timeBetweenGrowth);
             } else {
-                clearInterval(drawInterval);
+                clearInterval(runningInterval);
             }
         }
     });
