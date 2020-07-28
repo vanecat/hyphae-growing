@@ -2,8 +2,8 @@
  * If you don't see anything, then just wait a while.
  *****************************************************/
 
-function HyphaeGrowing(width, height, config, parentEl=false) {
-    const logEl = document.getElementById('log');
+function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
+    const logEl = document.getElementById('hyphae-growing-log');
 
     let isRunning = false;
     let runningInterval = null;
@@ -187,7 +187,10 @@ function HyphaeGrowing(width, height, config, parentEl=false) {
         if (growingBranches.length === 0) {
             isRunning = false;
         }
-        logEl.innerHTML = `${isRunning ? 'is':'NOT'} running :: growing branches: ${growingBranches.length}, dead branches: ${deadBranchesCount}, matrix: ${Object.keys(growthMatrix).length}`;
+
+        if (logEl) {
+            logEl.innerHTML = `${isRunning ? 'is':'NOT'} running :: growing branches: ${growingBranches.length}, dead branches: ${deadBranchesCount}, matrix: ${Object.keys(growthMatrix).length}`;
+        }
 
         if (!isRunning) {
             if (runningInterval) {
@@ -196,17 +199,23 @@ function HyphaeGrowing(width, height, config, parentEl=false) {
             return;
         }
     };
-    // Spacebar toggles
-    document.body.addEventListener('keypress', (e) => {
-        if (e.keyCode === 32) {
-            isRunning = !isRunning;
-            if (isRunning) {
-                runningInterval = setInterval(draw, config.timeBetweenGrowth);
-            } else {
-                clearInterval(runningInterval);
+
+    if (isDebug) {
+        // Spacebar toggles
+        document.body.addEventListener('keypress', (e) => {
+            if (e.keyCode === 32) {
+                isRunning = !isRunning;
+                if (isRunning) {
+                    runningInterval = setInterval(draw, config.timeBetweenGrowth);
+                } else {
+                    clearInterval(runningInterval);
+                }
             }
-        }
-    });
+        });
+    } else {
+        isRunning = true;
+        runningInterval = setInterval(draw, config.timeBetweenGrowth);
+    }
 }
 
 /*
