@@ -6,9 +6,83 @@
     <script src="hyphae-growing-v2.js"></script>
 </head>
 <body>
+<div>
+    <div><input class="start" type="button" value="Start/Pause" /></div>
+    <div><input class="stop" type="button" value="Stop" /></div>
+    <div><a href="#">Config 1</a></div>
+    <div><a href="#">Config 2</a></div>
+    <div><a href="#">Config 3</a></div>
+</div>
 <div id="hyphae-growing-log"></div>
 <script>
-    HyphaeGrowing(500,500, HyphaeGrowing.favoriteConfigs[2]);
+    const configs = [
+        {
+            lineColor: 'rgb(176, 137, 37)',
+            pBranchOff : 0.3,
+            pBranchRandomDeath : 0.0,
+            growthLengthMin : 2,
+            growthLengthMax : 4,
+            growthLengthIncrement : 2,
+            allowBranchOverlap : false,
+            timeBetweenGrowth : 10,
+            angleDeltaRange : 25,
+            branchMaxCount : 4,
+            branchGrowthMaxAttempts : 10,
+            pixelPrecision : 1
+        },
+        {
+            lineColor: 'rgb(176, 137, 37)',
+            pBranchOff : 0.4,
+            pBranchRandomDeath : 0.05,
+            growthLengthMin : 2,
+            growthLengthMax : 4,
+            growthLengthIncrement : 2,
+            allowBranchOverlap : false,
+            timeBetweenGrowth : 10,
+            angleDeltaRange : 25,
+            branchMaxCount : 4,
+            branchGrowthMaxAttempts : 10,
+            pixelPrecision : 1
+        },
+        {
+            lineColor: 'rgb(176, 137, 37)',
+            pBranchOff : 0.3,
+            pBranchRandomDeath : 0.0,
+            growthLengthMin : 2,
+            growthLengthMax : 4,
+            growthLengthIncrement : 2,
+            allowBranchOverlap : false,
+            timeBetweenGrowth : 10,
+            angleDeltaRange : 45,
+            branchMaxCount : 4,
+            branchGrowthMaxAttempts : 10,
+            pixelPrecision : 1
+        }
+    ];
+
+    document.querySelector('input.start').addEventListener('click', () => {
+        if (!!HyphaeGrowing.INSTANCE) {
+            HyphaeGrowing.INSTANCE.start();
+        }
+    });
+    document.querySelector('input.stop').addEventListener('click', () => {
+        if (!!HyphaeGrowing.INSTANCE) {
+            HyphaeGrowing.INSTANCE.destroy();
+        }
+    });
+    document.querySelectorAll('a').forEach((linkEl, i) => {
+        linkEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!!HyphaeGrowing.INSTANCE) {
+                HyphaeGrowing.INSTANCE.destroy();
+            }
+
+            HyphaeGrowing(500,500, HyphaeGrowing.favoriteConfigs[i], false, true);
+            HyphaeGrowing.INSTANCE.start();
+            return false;
+        })
+    })
+
 </script>
 </body>
 </html>
