@@ -228,19 +228,20 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
             return;
         }
 
-        if (isDebug) {
-            // Spacebar toggles
-            isRunning = !isRunning;
-            if (isRunning) {
-                runningInterval = setInterval(draw, config.timeBetweenGrowth);
-            } else {
-                clearInterval(runningInterval);
-            }
-        } else {
-            isRunning = true;
+        isRunning = !isRunning;
+        if (isRunning) {
             runningInterval = setInterval(draw, config.timeBetweenGrowth);
+        } else {
+            clearInterval(runningInterval);
         }
     };
+
+    if (isDebug) {
+        canvasEl.addEventListener('click', () => {
+            // mouse click/tap
+            start();
+        });
+    }
 
     HyphaeGrowing.INSTANCE = { start, destroy };
 }
