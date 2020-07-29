@@ -19,7 +19,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             height = parseInt(parentStyle.height);
         };
         resizeCanvasWithWindow();
-        window.addEventListener('resize', console.log);
+        window.addEventListener('resize', resizeCanvasWithWindow);
     }
 
     const canvasEl = document.createElement('canvas');
