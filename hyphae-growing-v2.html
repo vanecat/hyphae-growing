@@ -7,20 +7,52 @@
     <style>
         #canvas-parent {
             width: 50vw;
-            height: 100vh;
+            height: 50vh;
             margin: auto;
             border: 1px solid black;
+        }
+        .param {
+            margin-bottom: 10px;
+        }
+        .param input {
+            display: block;
         }
     </style>
 </head>
 <body>
-<div>
-    <div><input class="start" type="button" value="Start/Pause" /></div>
-    <div><input class="stop" type="button" value="Stop" /></div>
-    <div><a href="#" data-hyphae-growing="config">Config 1</a>, <a href="#">Config 2</a>, <a href="#">Config 3</a></div>
+<div style="display: inline-block; width: 300px; vertical-align: top;">
+    <div style="margin-bottom: 10px;">
+        <input class="start" type="button" value="Start/Pause" /> <input class="stop" type="button" value="Stop" />
+    </div>
+    <div style="border: 1px dashed purple;">
+        <div><strong>Configs:</strong></div>
+        <a href="#" data-hyphae-growing="config">Config 1</a>, <a href="#" data-hyphae-growing="config">Config 2</a>, <a href="#" data-hyphae-growing="config">Config 3</a>
+    </div>
+    <br/>
+    <div style="border: 1px dashed black;">
+        <div class="param"><input data-hyphae-param-save="" type="button" value="Refresh Hyphae"></div>
+        <div class="param">useParentWidthHeight: <select data-hyphae-param="useParentWidthHeight" data-type="bool"><option value="true">Yes</option><option value="false">No</option></select></div>
+        <div class="param">line color: <input data-hyphae-param="lineColor"  data-type="text" value="" type="text" /></div>
+        <div class="param">probability for branching off: <input data-hyphae-param="pBranchOff"  data-type="float" value="" type="text" /></div>
+        <div class="param">probability branch to randomly stop growing: <input data-hyphae-param="pBranchRandomDeath" data-type="float" value="" type="text" /></div>
+        <div class="param">growth length minimum: <input data-hyphae-param="growthLengthMin" data-type="int" value="" type="text" /></div>
+        <div class="param">growth length maximum: <input data-hyphae-param="growthLengthMax" data-type="int" value="" type="text" /></div>
+        <div class="param">growth length step: <input data-hyphae-param="growthLengthIncrement" data-type="int" value="" type="text" /></div>
+        <div class="param">allow branch overlap: <select data-hyphae-param="allowBranchOverlap" data-type="bool"><option value="true">Yes</option><option value="false">No</option></select></div>
+        <div class="param">time between growth: <input data-hyphae-param="timeBetweenGrowth" data-type="int" value="" type="text" /></div>
+        <div class="param">new branch angle change range (deg): <input data-hyphae-param="angleDeltaRange" data-type="int" value="" type="text" /></div>
+        <div class="param">branch max count: <input data-hyphae-param="branchMaxCount" data-type="int" value="" type="text" /></div>
+        <div class="param">branch growth max attempts: <input data-hyphae-param="branchGrowthMaxAttempts" data-type="int" value="" type="text" /></div>
+        <div class="param">pixel precision: <input data-hyphae-param="pixelPrecision" data-type="int" value="" type="text" /></div>
+    </div>
+
+</div>
+<div style="display: inline-block; vertical-align: top;">
+    <div id="hyphae-growing-log"></div>
     <div id="canvas-parent"></div>
 </div>
-<div id="hyphae-growing-log"></div>
+
+
 <script>
     const configs = [
         {
@@ -80,18 +112,52 @@
             HyphaeGrowing.INSTANCE.destroy();
         }
     });
-    document.querySelectorAll('a').forEach((linkEl, i) => {
+    document.querySelectorAll('[data-hyphae-growing="config"]').forEach((linkEl, i) => {
         linkEl.addEventListener('click', (e) => {
             e.preventDefault();
             if (!!HyphaeGrowing.INSTANCE) {
                 HyphaeGrowing.INSTANCE.destroy();
             }
 
+            document.querySelectorAll('[data-hyphae-param]').forEach((paramEl) => {
+                const name = paramEl.getAttribute('data-hyphae-param');
+                const type = paramEl.getAttribute('data-type');
+                paramEl.value = configs[i][name];
+            });
+
             HyphaeGrowing(configs[i], '#canvas-parent', true);
             HyphaeGrowing.INSTANCE.start();
             return false;
-        })
-    })
+        });
+    });
+
+    document.querySelector('[data-hyphae-param-save]').addEventListener('click', () => {
+        const newConfig = {};
+        document.querySelectorAll('[data-hyphae-param]').forEach((paramEl) => {
+            const name = paramEl.getAttribute('data-hyphae-param');
+            const type = paramEl.getAttribute('data-type');
+            switch(type) {
+                case 'int':
+                    newConfig[name] = parseInt(paramEl.value);
+                    break;
+                case 'float':
+                    newConfig[name] = parseInt(paramEl.value);
+                    break;
+                case 'bool':
+                    newConfig[name] = paramEl.value === 'true';
+                    break;
+                default:
+                    newConfig[name] = paramEl.value;
+            }
+        });
+        if (!!HyphaeGrowing.INSTANCE) {
+            HyphaeGrowing.INSTANCE.destroy();
+        }
+        HyphaeGrowing(newConfig, '#canvas-parent', true);
+        HyphaeGrowing.INSTANCE.start();
+
+    });
+
 
 </script>
 </body>
