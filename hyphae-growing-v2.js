@@ -112,7 +112,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
                         x1 = Math.ceil( config.pixelPrecision * (x + i * Math.cos(newAngle)) ) / config.pixelPrecision;
                         y1 = Math.ceil( config.pixelPrecision * (y + i * Math.sin(newAngle)) ) / config.pixelPrecision;
 
-                        if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinHyphalCircle(x1, y1)) {
+                        if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinHyphalCircle(x1, y1) || !isWithinBounds(x1, y1)) {
                             // no growth (bumped into other branch/frame edge on 1st try)
                             if (isFirstGrowthIncrement) {
                                 //console.log('hit other growth too soon');
