@@ -8,23 +8,23 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
     let isRunning = false;
     let runningInterval = null;
 
-    const c = document.createElement('canvas');
-    c.width = width;
-    c.height = height;
+    const canvasEl = document.createElement('canvas');
+    canvasEl.width = width;
+    canvasEl.height = height;
     parentEl = parentEl === false ? document.body : (parentEl instanceof Element ? parentEl : document.querySelector(parentEl));
 
-    parentEl.appendChild(c);
-    const ctx = c.getContext("2d");
-    ctx.fillStyle = 'rgba(200,200,200,0)';
-    ctx.strokeStyle = config.lineColor || 'black';
+    parentEl.appendChild(canvasEl);
+    const canvasContext = canvasEl.getContext("2d");
+    canvasContext.fillStyle = 'rgba(200,200,200,0)';
+    canvasContext.strokeStyle = config.lineColor || 'black';
 
     // smaller of the two dimensions of canvas - a buffer
     const hyphalRadius = Math.min(width, height) - 20;
 
     const line = (x1, y1, x0,y0) => {
-        ctx.moveTo(x0, y0);
-        ctx.lineTo(x1, y1);
-        ctx.stroke();
+        canvasContext.moveTo(x0, y0);
+        canvasContext.lineTo(x1, y1);
+        canvasContext.stroke();
     };
 
     const isWithinBounds = (x,y) => {
@@ -207,22 +207,42 @@ function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
         }
     };
 
-    if (isDebug) {
-        // Spacebar toggles
-        document.body.addEventListener('keypress', (e) => {
-            if (e.keyCode === 32) {
-                isRunning = !isRunning;
-                if (isRunning) {
-                    runningInterval = setInterval(draw, config.timeBetweenGrowth);
-                } else {
-                    clearInterval(runningInterval);
-                }
+    let isDestroyed = false;
+    const destroy = () => {
+        if (isDestroyed) {
+            return;
+        }
+
+        if (runningInterval) {
+            clearInterval(runningInterval);
+        }
+        isRunning = false;
+        if (canvasEl) {
+            parentEl.removeChild(canvasEl);
+        }
+        isDestroyed = true;
+    };
+
+    const start = () => {
+        if (isDestroyed) {
+            return;
+        }
+
+        if (isDebug) {
+            // Spacebar toggles
+            isRunning = !isRunning;
+            if (isRunning) {
+                runningInterval = setInterval(draw, config.timeBetweenGrowth);
+            } else {
+                clearInterval(runningInterval);
             }
-        });
-    } else {
-        isRunning = true;
-        runningInterval = setInterval(draw, config.timeBetweenGrowth);
-    }
+        } else {
+            isRunning = true;
+            runningInterval = setInterval(draw, config.timeBetweenGrowth);
+        }
+    };
+
+    HyphaeGrowing.INSTANCE = { start, destroy };
 }
 
 /*
