@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="hyphae-growing-v2.js"></script>
+    <style>
+        #canvas-parent {
+            width: 800px;
+            height: 600px;
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
 <div>
     <div><input class="start" type="button" value="Start/Pause" /></div>
     <div><input class="stop" type="button" value="Stop" /></div>
-    <div><a href="#">Config 1</a></div>
-    <div><a href="#">Config 2</a></div>
-    <div><a href="#">Config 3</a></div>
+    <div><a href="#">Config 1</a>, <a href="#">Config 2</a>, <a href="#">Config 3</a></div>
+    <div id="canvas-parent"></div>
 </div>
 <div id="hyphae-growing-log"></div>
 <script>
     const configs = [
         {
+            useParentWidthHeight: true,
             lineColor: 'rgb(176, 137, 37)',
             pBranchOff : 0.3,
             pBranchRandomDeath : 0.0,
@@ -31,6 +38,7 @@
             pixelPrecision : 1
         },
         {
+            useParentWidthHeight: true,
             lineColor: 'rgb(176, 137, 37)',
             pBranchOff : 0.4,
             pBranchRandomDeath : 0.05,
@@ -45,6 +53,7 @@
             pixelPrecision : 1
         },
         {
+            useParentWidthHeight: true,
             lineColor: 'rgb(176, 137, 37)',
             pBranchOff : 0.3,
             pBranchRandomDeath : 0.0,
@@ -77,7 +86,7 @@
                 HyphaeGrowing.INSTANCE.destroy();
             }
 
-            HyphaeGrowing(500,500, HyphaeGrowing.favoriteConfigs[i], false, true);
+            HyphaeGrowing(configs[i], '#canvas-parent', true);
             HyphaeGrowing.INSTANCE.start();
             return false;
         })

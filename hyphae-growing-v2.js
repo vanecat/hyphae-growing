@@ -2,16 +2,29 @@
  * If you don't see anything, then just wait a while.
  *****************************************************/
 
-function HyphaeGrowing(width, height, config, parentEl=false, isDebug=false) {
+function HyphaeGrowing(config, parentEl=false, isDebug=false) {
     const logEl = document.getElementById('hyphae-growing-log');
 
     let isRunning = false;
     let runningInterval = null;
 
+    parentEl = parentEl === false ? document.body : (parentEl instanceof Element ? parentEl : document.querySelector(parentEl));
+
+    let width = config.width;
+    let height = config.height;
+    if (config.useParentWidthHeight && parentEl instanceof Element) {
+        const resizeCanvasWithWindow = () => {
+            const parentStyle = window.getComputedStyle(parentEl);
+            width = parseInt(parentStyle.width);
+            height = parseInt(parentStyle.height);
+        };
+        resizeCanvasWithWindow();
+        window.addEventListener('resize', console.log);
+    }
+
     const canvasEl = document.createElement('canvas');
     canvasEl.width = width;
     canvasEl.height = height;
-    parentEl = parentEl === false ? document.body : (parentEl instanceof Element ? parentEl : document.querySelector(parentEl));
 
     parentEl.appendChild(canvasEl);
     const canvasContext = canvasEl.getContext("2d");
