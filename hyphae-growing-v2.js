@@ -32,7 +32,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
     canvasContext.strokeStyle = config.lineColor || 'black';
 
     // smaller of the two dimensions of canvas - a buffer
-    const hyphalRadius = Math.min(width, height) - 20;
+    const hyphalRadius = Math.min(width, height)/2 - 20;
 
     const line = (x1, y1, x0,y0) => {
         canvasContext.moveTo(x0, y0);
