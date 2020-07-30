@@ -256,7 +256,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         });
     }
 
-    HyphaeGrowing.INSTANCE = { start, destroy };
+    HyphaeGrowing.INSTANCE = { start, destroy, isDestroyed: () => isDestroyed };
 }
 
 /*
