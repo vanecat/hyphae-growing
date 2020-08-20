@@ -157,14 +157,14 @@
     let currentlyLoadedConfig = {id: '', config: ''};
 
     document.querySelector('input.start').addEventListener('click', () => {
-        if (!HyphaeGrowing.INSTANCE || HyphaeGrowing.INSTANCE.isDestroyed()) {
+        if (!HyphaeGrowing.INSTANCE) {
             if (!!currentlyLoadedConfig.id) {
                 HyphaeGrowing(currentlyLoadedConfig.config, '#canvas-parent', true);
             }
         }
 
         if (!!HyphaeGrowing.INSTANCE) {
-            HyphaeGrowing.INSTANCE.start();
+            HyphaeGrowing.INSTANCE.startPause();
         }
     });
     document.querySelector('input.stop').addEventListener('click', () => {

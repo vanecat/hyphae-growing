@@ -12,7 +12,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
 
     let width = config.width;
     let height = config.height;
-    if (config.useParentWidthHeight && parentEl instanceof Element) {
+    if ((!width || !height) && parentEl instanceof Element) {
         const resizeCanvasWithWindow = () => {
             const parentStyle = window.getComputedStyle(parentEl);
             width = parseInt(parentStyle.width);
@@ -220,9 +220,8 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         }
     };
 
-    let isDestroyed = false;
     const destroy = () => {
-        if (isDestroyed) {
+        if (!HyphaeGrowing.INSTANCE) {
             return;
         }
 
@@ -233,20 +232,40 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         if (canvasEl) {
             parentEl.removeChild(canvasEl);
         }
-        isDestroyed = true;
+        HyphaeGrowing.INSTANCE = null;
     };
 
-    const start = () => {
-        if (isDestroyed) {
+    const startPause = () => {
+        if (!HyphaeGrowing.INSTANCE) {
             return;
         }
 
-        isRunning = !isRunning;
-        if (isRunning) {
-            runningInterval = setInterval(draw, config.timeBetweenGrowth);
+        if (!isRunning) {
+            start();
         } else {
+            pause();
+        }
+    };
+    const start = () => {
+        if (!HyphaeGrowing.INSTANCE) {
+            return;
+        }
+
+        if (!isRunning) {
+            runningInterval = setInterval(draw, config.timeBetweenGrowth);
+        }
+        isRunning = true;
+    };
+
+    const pause = () => {
+        if (!HyphaeGrowing.INSTANCE) {
+            return;
+        }
+
+        if (isRunning) {
             clearInterval(runningInterval);
         }
+        isRunning = false;
     };
 
     if (isDebug) {
@@ -256,7 +275,8 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         });
     }
 
-    HyphaeGrowing.INSTANCE = { start, destroy, isDestroyed: () => isDestroyed };
+    HyphaeGrowing.INSTANCE = { start, pause, startPause, destroy };
+    return HyphaeGrowing.INSTANCE;
 }
 
 /*
