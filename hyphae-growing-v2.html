@@ -76,6 +76,7 @@
 
 
 <script>
+    const logEl = document.getElementById('hyphae-growing-log');
     const defaultConfigs = {
         'config_1': {
             useParentWidthHeight: true,
@@ -156,10 +157,16 @@
 
     let currentlyLoadedConfig = {id: '', config: ''};
 
+    const logBranchInfo = () => {
+        const model = HyphaeGrowing.INSTANCE.getModel();
+        logEl.innerHTML = `${model.isRunning ? 'is':'*NOT*'} running :: growing branches: ${model.growingBranchesCount}, matured branches: ${model.maturedBranchesCount}, matrix: ${model.matrixPixelsCount}`;
+    };
+
     document.querySelector('input.start').addEventListener('click', () => {
         if (!HyphaeGrowing.INSTANCE) {
             if (!!currentlyLoadedConfig.id) {
                 HyphaeGrowing(currentlyLoadedConfig.config, '#canvas-parent', true);
+                HyphaeGrowing.INSTANCE.onBranchGrown(logBranchInfo);
             }
         }
 

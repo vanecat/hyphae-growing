@@ -3,8 +3,6 @@
  *****************************************************/
 
 function HyphaeGrowing(config, parentEl=false, isDebug=false) {
-    const logEl = document.getElementById('hyphae-growing-log');
-
     let isRunning = false;
     let runningInterval = null;
 
@@ -165,16 +163,21 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
 
     const growingBranches = [Growth()];
 
-    let deadBranchesCount = 0;
+    const model = {
+        maturedBranchesCount: 0,
+        growingBranchesCount: 0,
+        matrixPixelsCount: 0,
+        isRunning: false
+    };
 
     const draw = () => {
         const newBranches = [];
-        const deadBranches = [];
+        const maturedBranches = [];
 
         const actuallyGrowingBranches = {};
         const growingBranchesCount = growingBranches.length;
         if (growingBranchesCount > 1000) {
-            // get half of the growning branches indeces, up to 1000 max
+            // get half of the growing branches indeces, up to 1000 max
             const maxRandIndeces = Math.min(500,growingBranchesCount/2);
             for(let i=0; i<maxRandIndeces; i++) {
                 const randIndex = Math.floor(Math.random() * growingBranchesCount);
@@ -192,12 +195,12 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             }
 
             if (growingBranches[i].isDoneGrowing()) {
-                deadBranches.push(i);
+                maturedBranches.push(i);
             }
         }
-        deadBranchesCount += deadBranches.length;
-        deadBranches.reverse();
-        for (let i of deadBranches) {
+
+        maturedBranches.reverse();
+        for (let i of maturedBranches) {
             growingBranches.splice(i,1);
         }
         for (let branch of newBranches) {
@@ -208,9 +211,11 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             isRunning = false;
         }
 
-        if (logEl) {
-            logEl.innerHTML = `${isRunning ? 'is':'NOT'} running :: growing branches: ${growingBranches.length}, dead branches: ${deadBranchesCount}, matrix: ${Object.keys(growthMatrix).length}`;
-        }
+        model.maturedBranchesCount += maturedBranches.length;
+        model.growingBranchesCount = growingBranches.length;
+        model.matrixPixelsCount = Object.keys(growthMatrix).length;
+        model.isRunning = isRunning;
+        onBranchGrownCbTrigger();
 
         if (!isRunning) {
             if (runningInterval) {
@@ -218,6 +223,16 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             }
             return;
         }
+    };
+
+    const onBranchGrownCb = [];
+    const onBranchGrown = (cb) => {
+        onBranchGrownCb.push(cb);
+    };
+    const onBranchGrownCbTrigger = () => {
+        onBranchGrownCb.forEach((cb) => {
+            cb();
+        });
     };
 
     const destroy = () => {
@@ -232,6 +247,11 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         if (canvasEl) {
             parentEl.removeChild(canvasEl);
         }
+
+        for(let i = onBranchGrownCb.length - 1; i >= 0; i--) {
+            onBranchGrownCb.pop();
+        }
+
         HyphaeGrowing.INSTANCE = null;
     };
 
@@ -268,6 +288,15 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         isRunning = false;
     };
 
+
+    const getModel = () => {
+        const clientModel = {};
+        Object.entries(model).forEach((entry) => {
+            clientModel[entry[0]] = entry[1];
+        });
+        return Object.freeze(clientModel);
+    };
+
     if (isDebug) {
         canvasEl.addEventListener('click', () => {
             // mouse click/tap
@@ -275,7 +304,14 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         });
     }
 
-    HyphaeGrowing.INSTANCE = { start, pause, startPause, destroy };
+    HyphaeGrowing.INSTANCE = {
+        start,
+        pause,
+        startPause,
+        destroy,
+        onBranchGrown,
+        getModel
+    };
     return HyphaeGrowing.INSTANCE;
 }
 
