@@ -209,13 +209,14 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
 
         if (growingBranches.length === 0) {
             isRunning = false;
+            callbackEventListeners('done-growing');
         }
 
         model.maturedBranchesCount += maturedBranches.length;
         model.growingBranchesCount = growingBranches.length;
         model.matrixPixelsCount = Object.keys(growthMatrix).length;
         model.isRunning = isRunning;
-        onBranchGrownCbTrigger();
+        callbackEventListeners('branch-grown');
 
         if (!isRunning) {
             if (runningInterval) {
@@ -225,12 +226,18 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         }
     };
 
-    const onBranchGrownCb = [];
-    const onBranchGrown = (cb) => {
-        onBranchGrownCb.push(cb);
+    let eventListeners = {};
+    const addEventListener = (type, cb) => {
+        if (!eventListeners[type]) {
+            eventListeners[type] = [];
+        }
+        eventListeners[type].push(cb);
     };
-    const onBranchGrownCbTrigger = () => {
-        onBranchGrownCb.forEach((cb) => {
+    const callbackEventListeners = (type) => {
+        if (!eventListeners[type]) {
+            return;
+        }
+        eventListeners[type].forEach((cb) => {
             cb();
         });
     };
@@ -248,9 +255,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             parentEl.removeChild(canvasEl);
         }
 
-        for(let i = onBranchGrownCb.length - 1; i >= 0; i--) {
-            onBranchGrownCb.pop();
-        }
+        eventListeners = {};
 
         HyphaeGrowing.INSTANCE = null;
     };
@@ -309,7 +314,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         pause,
         startPause,
         destroy,
-        onBranchGrown,
+        on: addEventListener,
         getModel
     };
     return HyphaeGrowing.INSTANCE;
