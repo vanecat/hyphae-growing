@@ -37,14 +37,24 @@ function HyphaeGrowingCreator() {
         }
     };
 
+    const vueDirectives = {};
+    vueDirectives['zzsample'] = {
+        bind: function (el, binding) {
+        },
+        update: function (el, binding) {
+        },
+        unbind: function () {
+        }
+    };
+
     const vueAppConfig  = {
         el: '#app',
         data: {
-            activeBranches: 100,
-            deadBranches: 1000,
+            model: false,
             isRunning: false,
-            isAlive: false,
-            isDetailView: false,
+            isMature: false,
+            isFullDetailView: false,
+            isBriefDetailView: false,
             config: {},
             hyphaeContainerEl: ''
         },
@@ -60,7 +70,7 @@ function HyphaeGrowingCreator() {
             });
         },
         methods: {
-            playPause: function(newState) {
+            startPause: function(newState) {
                 if (typeof newState === "boolean") {
                     this.isRunning = newState;
                 } else {
@@ -74,27 +84,53 @@ function HyphaeGrowingCreator() {
                 }
             },
             start: function() {
+                if (this.isMature) {
+                    this.stop();
+                }
+
                 if (!HyphaeGrowing.INSTANCE) {
                     // grab a random favorite config
                     this.config = HyphaeGrowing.favoriteConfigs[Math.floor(Math.random() * HyphaeGrowing.favoriteConfigs.length)];
 
                     HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
-                    this.isAlive = true;
+                    HyphaeGrowing.INSTANCE.on('branch-grown', this.updateModel);
+                    HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
                 }
                 HyphaeGrowing.INSTANCE.start();
+                this.isRunning = true;
             },
             pause: function() {
                 if (!!HyphaeGrowing.INSTANCE) {
                     HyphaeGrowing.INSTANCE.pause();
                 }
+                this.isRunning = false;
             },
             stop: function() {
                 if (!!HyphaeGrowing.INSTANCE) {
                     HyphaeGrowing.INSTANCE.destroy();
                 }
                 this.isRunning = false;
-                this.isAlive = false;
-            }
+                this.isMature = false;
+            },
+            updateModel: function() {
+                this.model = HyphaeGrowing.INSTANCE.getModel();
+            },
+            onDoneGrowing: function() {
+                this.isMature = true;
+                this.isRunning = false;
+            },
+            toggleFullDetail: function(e) {
+                this.isFullDetailView = !this.isFullDetailView;
+                const el = e.target;
+                if (!!el.dataset.onText && el.dataset.offText) {
+                    el.innerHTML = this.isFullDetailView ? el.dataset.onText : el.dataset.offText;
+                }
+            },
+            toggleBriefDetail: function() {
+                const self = this;
+                this.isBriefDetailView = !this.isBriefDetailView;
+            },
+
         }
     };
 
@@ -108,13 +144,18 @@ function HyphaeGrowingCreator() {
             const [name, config] = entry;
             Vue.component(name, config);
         });
+        Object.entries(vueDirectives).forEach((entry) => {
+            const [name, config] = entry;
+            Vue.directive(name, config);
+        });
         vueAppConfig.data.hyphaeContainerEl = hyphaeContainerEl;
-        HyphaeGrowingCreator.vueInstance = new Vue(vueAppConfig);
+        HyphaeGrowingCreator.INSTANCE.vue = new Vue(vueAppConfig);
         isInit = true;
     };
 
     HyphaeGrowingCreator.INSTANCE = {
-        init
+        init,
+        vue: null
     };
 
     return HyphaeGrowingCreator.INSTANCE;

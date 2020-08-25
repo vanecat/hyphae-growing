@@ -7,18 +7,58 @@
     <script src="vue.js"></script>
     <script src="creator.js"></script>
     <style>
+        .toggle {
+            cursor: pointer;
+        }
+        img {
+            height: 15px;
+            cursor: pointer;
+        }
 
+        .details .detail-item {
+            display: inline-block;
+            text-align: right;
+            margin-left: 10px;
+        }
+        .details .value, .details .label {
+            display: block;
+        }
+        .details .label {
+            transition: height ease-in 200ms;
+            height: 0;
+            overflow: hidden;
+        }
+        .details .label.visible {
+            height: 20px;
+        }
     </style>
 </head>
 <body>
 <div id="app">
-    <div v-on:click="playPause">
-        <span v-if="!isRunning">play</span>
-        <span v-else>pause</span>
+    <div v-if="!isFullDetailView">
+        <span v-on:click="start" v-if="!isRunning"><img src="../images/play.png" /></span>
+        <span v-on:click="pause" v-else><img src="../images/pause.png" /></span>
+        <span v-on:click="stop" v-if="isRunning && !isMature"><img src="../images/stop.png" /></span>
+        <span v-if="model" v-on:click="toggleBriefDetail" class="details">
+            <span v-if="model.growingBranchesCount" class="detail-item">
+                <span class="label" v-bind:class="{'visible': isBriefDetailView}">Growing</span>
+                <span class="value">{{model.growingBranchesCount}}</span>
+            </span>
+            <span v-if="model.growingBranchesCount" class="detail-item">
+                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Total Branches</span>
+                <span class="value">{{model.growingBranchesCount + model.maturedBranchesCount}}</span>
+            </span>
+            <span v-if="!model.growingBranchesCount" class="detail-item">
+                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Branches Grown</span>
+                <span class="detail">{{model.maturedBranchesCount}}</span>
+            </span>
+            &nbsp;
+            <span v-if="!isBriefDetailView"><img src="../images/question-mark.png"/></span>
+        </span>
+        <span class="toggle" v-if="isBriefDetailView" v-on:click="toggleFullDetail" data-on-text="show less" data-off-text="show more...">more info</span>
     </div>
-    <div v-on:click="stop" v-if="isAlive">stop</div>
-    <div>{{activeBranches}} / {{activeBranches + deadBranches}}</div>
-    <div v-if="!isDetailView"></div>
+    <div v-if="isFullDetailView">details...</div>
+
 </div>
 <div id="growth" style="width: 500px; height: 500px;"></div>
 
