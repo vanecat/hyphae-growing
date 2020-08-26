@@ -32,7 +32,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
     // smaller of the two dimensions of canvas - a buffer
     const hyphalRadius = Math.min(width, height)/2 - 20;
 
-    const line = (x1, y1, x0,y0) => {
+    const drawLine = (x1, y1, x0,y0) => {
         canvasContext.moveTo(x0, y0);
         canvasContext.lineTo(x1, y1);
         canvasContext.stroke();
@@ -137,7 +137,7 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
             attemptedBranchCount++;
 
             if (hasGrownBranch) {
-                line(x1, y1, x, y);
+                drawLine(x1, y1, x, y);
                 if (Math.random() < config.pBranchOff) {
                     // Create a new growing point from tip of branch and current angle
                     return Growth(x1, y1, newAngle);
