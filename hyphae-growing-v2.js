@@ -65,9 +65,8 @@ function HyphaeGrowing(config, parentEl=false) {
     const isPointOccupied = (x,y) => {
         return growthMatrix[x+'_'+y];
     };
-    const nearbyRadius = 1;
+
     const arePointsNearbyOccupied = (x,y, x0, y0) => {
-        let isOccupied = false;
         for(let xi=-1; xi<=1; xi++) {
             for(let yi=-1; yi<=1; yi++) {
                 if (xi + x === x0 && yi + y === y0) {
@@ -80,6 +79,7 @@ function HyphaeGrowing(config, parentEl=false) {
         }
         return false;
     };
+
     const Growth = (x=width/2, y=height/2, angle=null, growthCyclesWithoutBranching=0) => {
         if (angle === null) {
             // initial angle is random
