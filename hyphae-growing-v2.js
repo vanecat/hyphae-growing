@@ -80,7 +80,7 @@ function HyphaeGrowing(config, parentEl=false) {
         return false;
     };
 
-    const Growth = (x=width/2, y=height/2, angle=null, growthCyclesWithoutBranching=0) => {
+    const Growth = (x=width/2, y=height/2, angle=null) => {
         if (angle === null) {
             // initial angle is random
             angle = Math.floor(Math.random() * 360);
@@ -88,6 +88,7 @@ function HyphaeGrowing(config, parentEl=false) {
 
         let potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
         let attemptedBranchCount = 0;
+        let growthCyclesWithoutBranching = 0;
 
         const grow = () => {
 
