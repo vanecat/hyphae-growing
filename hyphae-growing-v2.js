@@ -2,7 +2,7 @@
  * If you don't see anything, then just wait a while.
  *****************************************************/
 
-function HyphaeGrowing(config, parentEl=false, isDebug=false) {
+function HyphaeGrowing(config, parentEl=false) {
     let isRunning = false;
     let runningInterval = null;
 
@@ -302,10 +302,10 @@ function HyphaeGrowing(config, parentEl=false, isDebug=false) {
         return Object.freeze(clientModel);
     };
 
-    if (isDebug) {
+    if (config.startPauseOnClick) {
         canvasEl.addEventListener('click', () => {
             // mouse click/tap
-            start();
+            startPause();
         });
     }
 
