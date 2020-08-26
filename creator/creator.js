@@ -139,7 +139,10 @@ function HyphaeGrowingCreator() {
                 this.changeSpeed(-1);
             },
             changeSpeed: function(delta) {
-                this.pause();
+                const wasRunning = this.isRunning;
+                if (this.isRunning) {
+                    this.pause();
+                }
 
                 let newGrowthSpeed = this.growthSpeed + delta;
                 if (newGrowthSpeed < 1) {
@@ -149,7 +152,11 @@ function HyphaeGrowingCreator() {
                 }
                 this.growthSpeed = newGrowthSpeed;
 
-                this.config.timeBetweenGrowth = 100 * (this.growthSpeed);
+                this.config.timeBetweenGrowth = 100 * (10 - this.growthSpeed);
+
+                if (wasRunning) {
+                    this.start();
+                }
             },
             noop: () => {}
         }
