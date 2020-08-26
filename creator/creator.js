@@ -38,8 +38,9 @@ function HyphaeGrowingCreator() {
     };
 
     const vueDirectives = {};
-    vueDirectives['zzsample'] = {
+    vueDirectives['dblclick-select'] = {
         bind: function (el, binding) {
+            el.style.userSelect = 'none';
         },
         update: function (el, binding) {
         },
@@ -56,7 +57,8 @@ function HyphaeGrowingCreator() {
             isFullDetailView: false,
             isBriefDetailView: false,
             config: {},
-            hyphaeContainerEl: ''
+            hyphaeContainerEl: '',
+            growthSpeed: 5
         },
         mounted: function() {
             if (!this.hyphaeContainerEl) {
@@ -130,7 +132,26 @@ function HyphaeGrowingCreator() {
                 const self = this;
                 this.isBriefDetailView = !this.isBriefDetailView;
             },
+            increaseSpeed: function() {
+                this.changeSpeed(1);
+            },
+            decreaseSpeed: function() {
+                this.changeSpeed(-1);
+            },
+            changeSpeed: function(delta) {
+                this.pause();
 
+                let newGrowthSpeed = this.growthSpeed + delta;
+                if (newGrowthSpeed < 1) {
+                    newGrowthSpeed = 1;
+                } else if (newGrowthSpeed > 9) {
+                    newGrowthSpeed = 9;
+                }
+                this.growthSpeed = newGrowthSpeed;
+
+                this.config.timeBetweenGrowth = 100 * (this.growthSpeed);
+            },
+            noop: () => {}
         }
     };
 

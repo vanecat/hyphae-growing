@@ -18,7 +18,7 @@
         .details .detail-item {
             display: inline-block;
             text-align: right;
-            margin-left: 10px;
+            margin: 0 10px;
         }
         .details .value, .details .label {
             display: block;
@@ -26,38 +26,88 @@
         .details .label {
             transition: height ease-in 200ms;
             height: 0;
+            width: 0;
             overflow: hidden;
         }
         .details .label.visible {
+            width: auto;
             height: 20px;
+        }
+
+        .speed {
+            display: inline-block;
+            border: 1px solid black;
+            height: 15px;
+            width: 100px;
+            padding: 0;
+        }
+        .speed-mark {
+            border-right: 4px solid black;
+            width: 0;
+            height: 15px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        .speed-button {
+            cursor: pointer;
+            display: inline-block;
+
+            width: 15px;
+            height: 15px;
+            line-height: 15px;
+
+            border-radius: 5px;
+
+            text-align: center;
+            vertical-align: baseline;
+
+            background-color: antiquewhite;
+        }
+        .speed-button:hover {
+            background-color: grey;
+            color: white;
         }
     </style>
 </head>
 <body>
 <div id="app">
-    <div v-if="!isFullDetailView">
+    <div>
+        <span v-on:click="toggleBriefDetail"><img src="../images/question-mark.png"/></span>
+
         <span v-on:click="start" v-if="!isRunning"><img src="../images/play.png" /></span>
         <span v-on:click="pause" v-else><img src="../images/pause.png" /></span>
+
         <span v-on:click="stop" v-if="isRunning && !isMature"><img src="../images/stop.png" /></span>
-        <span v-if="model" v-on:click="toggleBriefDetail" class="details">
-            <span v-if="model.growingBranchesCount" class="detail-item">
-                <span class="label" v-bind:class="{'visible': isBriefDetailView}">Growing</span>
+
+        <div v-if="model" v-on:click="toggleBriefDetail" class="details">
+            <span class="detail-item">
+                <span class="label" v-bind:class="{'visible': isBriefDetailView}">Growing Branches</span>
                 <span class="value">{{model.growingBranchesCount}}</span>
             </span>
-            <span v-if="model.growingBranchesCount" class="detail-item">
+            <span v-if="!isBriefDetailView">/</span>
+            <span class="detail-item">
                 <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Total Branches</span>
                 <span class="value">{{model.growingBranchesCount + model.maturedBranchesCount}}</span>
             </span>
-            <span v-if="!model.growingBranchesCount" class="detail-item">
-                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Branches Grown</span>
-                <span class="detail">{{model.maturedBranchesCount}}</span>
+            <span v-if="!isBriefDetailView">/</span>
+            <span class="detail-item">
+                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Hyphae Mass</span>
+                <span class="value">{{model.matrixPixelsCount}}</span>
             </span>
-            &nbsp;
-            <span v-if="!isBriefDetailView"><img src="../images/question-mark.png"/></span>
-        </span>
+        </div>
+
         <span class="toggle" v-if="isBriefDetailView" v-on:click="toggleFullDetail" data-on-text="show less" data-off-text="show more...">more info</span>
     </div>
-    <div v-if="isFullDetailView">details...</div>
+    <div v-if="isFullDetailView">
+        <div>Speed:
+            <span class="speed-button decrease" v-on:click="decreaseSpeed" v-dblclick-select="0">-</span>
+            <span class="speed" width="100px;">
+                <span class="speed-mark" v-bind:style="{'width': (growthSpeed * 10) + '%'}"></span>
+            </span>
+            <span class="speed-button increase" v-on:click="increaseSpeed" v-dblclick-select="0">+</span>
+        </div>
+        <div>Complex</div>
+    </div>
 
 </div>
 <div id="growth" style="width: 500px; height: 500px;"></div>
