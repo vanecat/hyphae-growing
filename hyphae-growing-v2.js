@@ -321,6 +321,16 @@ function HyphaeGrowing(config, parentEl=false) {
     return HyphaeGrowing.INSTANCE;
 }
 
+HyphaeGrowing.getRandomFavoriteConfig = () => {
+    const config = HyphaeGrowing.favoriteConfigs[Math.floor(Math.random() * HyphaeGrowing.favoriteConfigs.length)];
+    const clientConfig = {};
+
+    Object.entries(config).forEach((entry) => {
+        clientConfig[entry[0]] = entry[1];
+    });
+    return clientConfig;
+};
+
 /*
 Sample config
 */
@@ -368,4 +378,5 @@ HyphaeGrowing.favoriteConfigs = [
         pixelPrecision : 1
     }
 ];
+Object.freeze(HyphaeGrowing.favoriteConfigs);
 /* */
