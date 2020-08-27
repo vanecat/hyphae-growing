@@ -58,7 +58,9 @@ function HyphaeGrowingCreator() {
             isBriefDetailView: false,
             config: {},
             hyphaeContainerEl: '',
-            growthSpeed: 5
+            growthSpeed: 10,
+            growthSpeedPercent: 100,
+            growthSpeedToTimeMap: { "1": 1000, "2": 500,  "3": 250, "4":200, "5": 150, "6": 100, "7": 50, "8":25, "9": 10 }
         },
         mounted: function() {
             if (!this.hyphaeContainerEl) {
@@ -92,11 +94,13 @@ function HyphaeGrowingCreator() {
 
                 if (!HyphaeGrowing.INSTANCE) {
                     // grab a random favorite config
-                    this.config = HyphaeGrowing.favoriteConfigs[Math.floor(Math.random() * HyphaeGrowing.favoriteConfigs.length)];
+                    this.config = HyphaeGrowing.getRandomFavoriteConfig();
 
                     HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
                     HyphaeGrowing.INSTANCE.on('branch-grown', this.updateModel);
                     HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
+
+                    this.setSpeedInternalValues();
                 }
                 HyphaeGrowing.INSTANCE.start();
                 this.isRunning = true;
@@ -138,6 +142,10 @@ function HyphaeGrowingCreator() {
             decreaseSpeed: function() {
                 this.changeSpeed(-1);
             },
+            setSpeedInternalValues: function() {
+                this.growthSpeedPercent = this.growthSpeed * 10;
+                this.config.timeBetweenGrowth = this.growthSpeedToTimeMap[String(this.growthSpeed)];
+            },
             changeSpeed: function(delta) {
                 const wasRunning = this.isRunning;
                 if (this.isRunning) {
@@ -151,8 +159,7 @@ function HyphaeGrowingCreator() {
                     newGrowthSpeed = 9;
                 }
                 this.growthSpeed = newGrowthSpeed;
-
-                this.config.timeBetweenGrowth = 100 * (10 - this.growthSpeed);
+                this.setSpeedInternalValues();
 
                 if (wasRunning) {
                     this.start();

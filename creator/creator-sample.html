@@ -102,7 +102,7 @@
         <div>Speed:
             <span class="speed-button decrease" v-on:click="decreaseSpeed" v-dblclick-select="0">-</span>
             <span class="speed" width="100px;">
-                <span class="speed-mark" v-bind:style="{'width': (growthSpeed * 10) + '%'}"></span>
+                <span class="speed-mark" v-bind:style="{'width': growthSpeedPercent + '%'}"></span>
             </span>
             <span class="speed-button increase" v-on:click="increaseSpeed" v-dblclick-select="0">+</span>
         </div>
