@@ -33,6 +33,7 @@ function HyphaeGrowing(config, parentEl=false) {
     const hyphalRadius = Math.min(width, height)/2 - 20;
 
     const drawLine = (x1, y1, x0,y0) => {
+        canvasContext.beginPath();
         canvasContext.moveTo(x0, y0);
         canvasContext.lineTo(x1, y1);
         canvasContext.stroke();
