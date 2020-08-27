@@ -177,10 +177,9 @@ function HyphaeGrowing(config, parentEl=false) {
 
         const actuallyGrowingBranches = {};
         const growingBranchesCount = growingBranches.length;
-        if (growingBranchesCount > 1000) {
-            // get half of the growing branches indeces, up to 1000 max
-            const maxRandIndeces = Math.min(500,growingBranchesCount/2);
-            for(let i=0; i<maxRandIndeces; i++) {
+        // if too many branches, pick only 500 random to grow at a time
+        if (growingBranchesCount > 500) {
+            for(let i=0; i<500; i++) {
                 const randIndex = Math.floor(Math.random() * growingBranchesCount);
                 actuallyGrowingBranches[randIndex] = true;
             }
