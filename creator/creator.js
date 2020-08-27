@@ -135,6 +135,9 @@ function HyphaeGrowingCreator() {
             toggleBriefDetail: function() {
                 const self = this;
                 this.isBriefDetailView = !this.isBriefDetailView;
+                if (!this.isBriefDetailView) {
+                    this.isFullDetailView = false;
+                }
             },
             increaseSpeed: function() {
                 this.changeSpeed(1);
