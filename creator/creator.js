@@ -67,7 +67,7 @@ function HyphaeGrowingCreator() {
                 complexity: {
                     value: 6,
                     percent: 60,
-                    valueMap: { "1": "25,2", "2": "30,2",  "3": "35,3", "4":"40,3", "5": "45,5", "6": "50,7", "7": "55,10", "8": "60,10", "9": "70,20"}
+                    valueMap: { "1": "25,2,2,4", "2": "30,2,2,6",  "3": "35,3,3,7", "4":"40,3,4,8", "5": "45,5,5,9", "6": "50,7,6,10", "7": "55,10,7,11", "8": "60,10,8,12", "9": "70,20,9,13"}
                 }
             }
         },
@@ -152,9 +152,11 @@ function HyphaeGrowingCreator() {
                 this.config.timeBetweenGrowth = this.controls.speed.valueMap[String(this.controls.speed.value)];
 
                 const complexity = this.controls.complexity.valueMap[String(this.controls.complexity.value)];
-                const [angle, maxBranches] = complexity.split(',');
+                const [angle, maxBranches, growthLengthMin, growthLengthMax] = complexity.split(',');
                 this.config.angleDeltaRange = parseInt(angle);
                 this.config.branchMaxCount = parseInt(maxBranches);
+                this.config.growthLengthMax = parseInt(growthLengthMin);
+                this.config.growthLengthMin = parseInt(growthLengthMax);
             },
             changeControlValue: function(name, delta) {
                 const wasRunning = this.isRunning;
