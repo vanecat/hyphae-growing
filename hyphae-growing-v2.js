@@ -4,33 +4,37 @@
 
 function HyphaeGrowing(config, parentEl=false) {
     let isRunning = false;
+    let isInit = false;
     let runningInterval = null;
 
     parentEl = parentEl === false ? document.body : (parentEl instanceof Element ? parentEl : document.querySelector(parentEl));
-
-    let width = config.width;
-    let height = config.height;
-    if ((!width || !height) && parentEl instanceof Element) {
-        const resizeCanvasWithWindow = () => {
-            const parentStyle = window.getComputedStyle(parentEl);
-            width = parseInt(parentStyle.width);
-            height = parseInt(parentStyle.height);
-        };
-        resizeCanvasWithWindow();
-        window.addEventListener('resize', resizeCanvasWithWindow);
+    if (!(parentEl instanceof Element)) {
+        throw new Error('hyphae growing: no parent element');
     }
-
     const canvasEl = document.createElement('canvas');
-    canvasEl.width = width;
-    canvasEl.height = height;
+
+    let width = null;
+    let height = null;
+    let startPos = null;
+    let hyphalRadius = null;
+
+    const setBoundsAndStartPos = () => {
+        const parentStyle = window.getComputedStyle(parentEl);
+        width = parseInt(parentStyle.width);
+        height = parseInt(parentStyle.height);
+
+        // smaller of the two dimensions of canvas - a buffer
+        hyphalRadius = Math.min(width, height)/2 - 20;
+        startPos = {x: width/2, y: height/2};
+        canvasEl.width = width;
+        canvasEl.height = height;
+    };
+    setBoundsAndStartPos();
+    window.addEventListener('resize', setBoundsAndStartPos);
 
     parentEl.appendChild(canvasEl);
     const canvasContext = canvasEl.getContext("2d");
-    canvasContext.fillStyle = 'rgba(200,200,200,0)';
     canvasContext.strokeStyle = config.lineColor || 'black';
-
-    // smaller of the two dimensions of canvas - a buffer
-    const hyphalRadius = Math.min(width, height)/2 - 20;
 
     const drawLine = (x1, y1, x0,y0) => {
         canvasContext.beginPath();
@@ -62,7 +66,7 @@ function HyphaeGrowing(config, parentEl=false) {
     if (!config.pixelPrecision) config.pixelPrecision = 1;
 
     // Point at which the hyphae grows
-    const growthMatrix = {};
+    let growthMatrix = {};
     const isPointOccupied = (x,y) => {
         return growthMatrix[x+'_'+y];
     };
@@ -81,7 +85,7 @@ function HyphaeGrowing(config, parentEl=false) {
         return false;
     };
 
-    const Growth = (x=width/2, y=height/2, angle=null) => {
+    const Growth = (x, y, angle=null) => {
         if (angle === null) {
             // initial angle is random
             angle = Math.floor(Math.random() * 360);
@@ -163,13 +167,14 @@ function HyphaeGrowing(config, parentEl=false) {
         }
     };
 
-    const growingBranches = [Growth()];
+    const growingBranches = [];
 
     const model = {
         maturedBranchesCount: 0,
         growingBranchesCount: 0,
         matrixPixelsCount: 0,
-        isRunning: false
+        isRunning: false,
+        isInit: false
     };
 
     const draw = () => {
@@ -209,14 +214,14 @@ function HyphaeGrowing(config, parentEl=false) {
         }
 
         if (growingBranches.length === 0) {
-            isRunning = false;
+            isRunning = model.isRunning = false;
             callbackEventListeners('done-growing');
         }
 
         model.maturedBranchesCount += maturedBranches.length;
         model.growingBranchesCount = growingBranches.length;
         model.matrixPixelsCount = Object.keys(growthMatrix).length;
-        model.isRunning = isRunning;
+
         callbackEventListeners('branch-grown');
 
         if (!isRunning) {
@@ -243,22 +248,28 @@ function HyphaeGrowing(config, parentEl=false) {
         });
     };
 
-    const destroy = () => {
-        if (!HyphaeGrowing.INSTANCE) {
+
+    const init = () => {
+        isInit = model.isInit = true;
+        growingBranches.push(Growth(startPos.x, startPos.y));
+    };
+
+    const stop = () => {
+        if (!HyphaeGrowing.INSTANCE || !isInit) {
             return;
         }
 
         if (runningInterval) {
             clearInterval(runningInterval);
         }
-        isRunning = false;
-        if (canvasEl) {
-            parentEl.removeChild(canvasEl);
-        }
 
         eventListeners = {};
+        growingBranches.splice(0);
+        growthMatrix = {};
 
-        HyphaeGrowing.INSTANCE = null;
+        canvasContext.clearRect(0, 0, width, height);
+        isRunning = model.isRunning = false;
+        isInit = model.isInit = false;
     };
 
     const startPause = () => {
@@ -277,10 +288,13 @@ function HyphaeGrowing(config, parentEl=false) {
             return;
         }
 
+        if (!isInit) {
+            init();
+        }
         if (!isRunning) {
             runningInterval = setInterval(draw, config.timeBetweenGrowth);
         }
-        isRunning = true;
+        isRunning = model.isRunning = true;
     };
 
     const pause = () => {
@@ -291,7 +305,7 @@ function HyphaeGrowing(config, parentEl=false) {
         if (isRunning) {
             clearInterval(runningInterval);
         }
-        isRunning = false;
+        isRunning = model.isRunning = false;
     };
 
 
@@ -314,7 +328,7 @@ function HyphaeGrowing(config, parentEl=false) {
         start,
         pause,
         startPause,
-        destroy,
+        stop,
         on: addEventListener,
         getModel
     };
