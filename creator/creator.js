@@ -122,7 +122,7 @@ function HyphaeGrowingCreator() {
             },
             stop: function() {
                 if (!!HyphaeGrowing.INSTANCE) {
-                    HyphaeGrowing.INSTANCE.destroy();
+                    HyphaeGrowing.INSTANCE.stop();
                 }
                 this.isRunning = false;
                 this.isMature = false;
