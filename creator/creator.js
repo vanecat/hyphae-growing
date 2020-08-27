@@ -58,7 +58,7 @@ function HyphaeGrowingCreator() {
             isBriefDetailView: false,
             config: {},
             hyphaeContainerEl: '',
-            growthSpeed: 10,
+            growthSpeed: 6,
             growthSpeedPercent: 100,
             growthSpeedToTimeMap: { "1": 1000, "2": 500,  "3": 250, "4":200, "5": 150, "6": 100, "7": 50, "8":25, "9": 10 }
         },
