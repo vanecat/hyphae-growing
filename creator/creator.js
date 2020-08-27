@@ -58,9 +58,18 @@ function HyphaeGrowingCreator() {
             isBriefDetailView: false,
             config: {},
             hyphaeContainerEl: '',
-            growthSpeed: 6,
-            growthSpeedPercent: 100,
-            growthSpeedToTimeMap: { "1": 1000, "2": 500,  "3": 250, "4":200, "5": 150, "6": 100, "7": 50, "8":25, "9": 10 }
+            controls: {
+                speed: {
+                    value: 6,
+                    percent: 60,
+                    valueMap: { "1": 1000, "2": 500,  "3": 250, "4":200, "5": 150, "6": 100, "7": 50, "8":25, "9": 10 }
+                },
+                complexity: {
+                    value: 6,
+                    percent: 60,
+                    valueMap: { "1": "25,2", "2": "30,2",  "3": "35,3", "4":"40,3", "5": "45,5", "6": "50,7", "7": "55,10", "8": "60,10", "9": "70,20"}
+                }
+            }
         },
         mounted: function() {
             if (!this.hyphaeContainerEl) {
@@ -100,7 +109,7 @@ function HyphaeGrowingCreator() {
                     HyphaeGrowing.INSTANCE.on('branch-grown', this.updateModel);
                     HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
 
-                    this.setSpeedInternalValues();
+                    this.updateConfigFromControls();
                 }
                 HyphaeGrowing.INSTANCE.start();
                 this.isRunning = true;
@@ -139,30 +148,29 @@ function HyphaeGrowingCreator() {
                     this.isFullDetailView = false;
                 }
             },
-            increaseSpeed: function() {
-                this.changeSpeed(1);
+            updateConfigFromControls: function() {
+                this.config.timeBetweenGrowth = this.controls.speed.valueMap[String(this.controls.speed.value)];
+
+                const complexity = this.controls.complexity.valueMap[String(this.controls.complexity.value)];
+                const [angle, maxBranches] = complexity.split(',');
+                this.config.angleDeltaRange = parseInt(angle);
+                this.config.branchMaxCount = parseInt(maxBranches);
             },
-            decreaseSpeed: function() {
-                this.changeSpeed(-1);
-            },
-            setSpeedInternalValues: function() {
-                this.growthSpeedPercent = this.growthSpeed * 10;
-                this.config.timeBetweenGrowth = this.growthSpeedToTimeMap[String(this.growthSpeed)];
-            },
-            changeSpeed: function(delta) {
+            changeControlValue: function(name, delta) {
                 const wasRunning = this.isRunning;
                 if (this.isRunning) {
                     this.pause();
                 }
 
-                let newGrowthSpeed = this.growthSpeed + delta;
-                if (newGrowthSpeed < 1) {
-                    newGrowthSpeed = 1;
-                } else if (newGrowthSpeed > 9) {
-                    newGrowthSpeed = 9;
+                let newValue = this.controls[name].value + delta;
+                if (newValue < 1) {
+                    newValue = 1;
+                } else if (newValue > 9) {
+                    newValue = 9;
                 }
-                this.growthSpeed = newGrowthSpeed;
-                this.setSpeedInternalValues();
+                this.controls[name].value = newValue;
+                this.controls[name].percent = newValue * 10;
+                this.updateConfigFromControls();
 
                 if (wasRunning) {
                     this.start();
