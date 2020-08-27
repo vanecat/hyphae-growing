@@ -7,6 +7,11 @@
     <script src="vue.js"></script>
     <script src="creator.js"></script>
     <style>
+        #app {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
         .toggle {
             cursor: pointer;
         }
@@ -74,6 +79,8 @@
     <div>
         <span v-on:click="toggleBriefDetail"><img src="../images/question-mark.png"/></span>
 
+        <span class="label" v-if="isBriefDetailView">Hyphae Growing <span v-if="isMature">(done)</span></span>
+
         <span v-on:click="start" v-if="!isRunning"><img src="../images/play.png" /></span>
         <span v-on:click="pause" v-else><img src="../images/pause.png" /></span>
 
@@ -96,17 +103,16 @@
             </span>
         </div>
 
-        <span class="toggle" v-if="isBriefDetailView" v-on:click="toggleFullDetail" data-on-text="show less" data-off-text="show more...">more info</span>
+        <span class="toggle" v-if="isBriefDetailView" v-on:click="toggleFullDetail"><img src="../images/gear.png"/></span>
     </div>
     <div v-if="isFullDetailView">
         <div>Speed:
-            <span class="speed-button decrease" v-on:click="decreaseSpeed" v-dblclick-select="0">-</span>
+            <span class="speed-button decrease" v-on:click="decreaseSpeed" v-dblclick-select="disable">-</span>
             <span class="speed" width="100px;">
                 <span class="speed-mark" v-bind:style="{'width': growthSpeedPercent + '%'}"></span>
             </span>
-            <span class="speed-button increase" v-on:click="increaseSpeed" v-dblclick-select="0">+</span>
+            <span class="speed-button increase" v-on:click="increaseSpeed" v-dblclick-select="disable">+</span>
         </div>
-        <div>Complex</div>
     </div>
 
 </div>
