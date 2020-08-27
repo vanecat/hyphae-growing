@@ -107,18 +107,18 @@
     </div>
     <div v-if="isFullDetailView">
         <div>Speed:
-            <span class="speed-button decrease" v-on:click="changeControlValue('speed', -1)" v-dblclick-select="disable">-</span>
+            <span class="speed-button decrease" v-on:click="changeControlValue('speed', -1)" v-dblclick-select="0">-</span>
             <span class="speed" width="100px;">
                 <span class="speed-mark" v-bind:style="{'width': controls.speed.percent + '%'}"></span>
             </span>
-            <span class="speed-button increase" v-on:click="changeControlValue('speed', 1)" v-dblclick-select="disable">+</span>
+            <span class="speed-button increase" v-on:click="changeControlValue('speed', 1)" v-dblclick-select="0">+</span>
         </div>
         <div>Craziness:
-            <span class="speed-button decrease" v-on:click="changeControlValue('complexity', -1)" v-dblclick-select="disable">-</span>
+            <span class="speed-button decrease" v-on:click="changeControlValue('complexity', -1)" v-dblclick-select="0">-</span>
             <span class="speed" width="100px;">
                 <span class="speed-mark" v-bind:style="{'width': controls.complexity.percent + '%'}"></span>
             </span>
-            <span class="speed-button increase" v-on:click="changeControlValue('complexity', 1)" v-dblclick-select="disable">+</span>
+            <span class="speed-button increase" v-on:click="changeControlValue('complexity', 1)" v-dblclick-select="0">+</span>
         </div>
     </div>
 
