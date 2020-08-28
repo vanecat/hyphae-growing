@@ -65,6 +65,17 @@ function HyphaeGrowing(config, parentEl=false) {
     if (!config.branchGrowthMaxAttempts) config.branchGrowthMaxAttempts = 10;
     if (!config.pixelPrecision) config.pixelPrecision = 1;
 
+
+    const restartOnCanvasClick = (e) => {
+        stop();
+        const canvasBounds = canvasEl.getBoundingClientRect();
+        startPos = {x: e.x - canvasBounds.x, y: e.y - canvasBounds.y};
+        start();
+    };
+
+    if (config.restartAtClickPosition) {
+        canvasEl.addEventListener('click', restartOnCanvasClick);
+    }
     // Point at which the hyphae grows
     let growthMatrix = {};
     const isPointOccupied = (x,y) => {
@@ -374,7 +385,8 @@ HyphaeGrowing.favoriteConfigs = [
         angleDeltaRange : 25,
         branchMaxCount : 4,
         branchGrowthMaxAttempts : 10,
-        pixelPrecision : 1
+        pixelPrecision : 1,
+        restartAtClickPosition: true
     },
     {
         lineColor: 'rgb(176, 137, 37)',
@@ -388,7 +400,8 @@ HyphaeGrowing.favoriteConfigs = [
         angleDeltaRange : 25,
         branchMaxCount : 4,
         branchGrowthMaxAttempts : 10,
-        pixelPrecision : 1
+        pixelPrecision : 1,
+        restartAtClickPosition: true
     },
     {
         lineColor: 'rgb(176, 137, 37)',
@@ -402,7 +415,8 @@ HyphaeGrowing.favoriteConfigs = [
         angleDeltaRange : 45,
         branchMaxCount : 4,
         branchGrowthMaxAttempts : 10,
-        pixelPrecision : 1
+        pixelPrecision : 1,
+        restartAtClickPosition: true
     }
 ];
 Object.freeze(HyphaeGrowing.favoriteConfigs);
