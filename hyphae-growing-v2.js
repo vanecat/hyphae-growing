@@ -170,7 +170,6 @@ function HyphaeGrowing(config, parentEl=false) {
                     }
 
                     newAngle = newAngleWithParentsInMind;
-                    console.log(parentsAngles);
                 }
 
 
@@ -437,7 +436,7 @@ HyphaeGrowing.favoriteConfigs = [
     {
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 2,
-        branchAngleAncestralMemoryMostWeightOn: 'closest',
+        branchAngleAncestralMemoryMostWeightOn: 'equal',
         pBranchOff : 0.4,
         pBranchRandomDeath : 0,
         growthLengthMin : 2,
