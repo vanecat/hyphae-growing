@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../dist/hyphae-growing.js"></script>
+    <script>
+        HyphaeGrowingCreator.addPreInitStyles('#app');
+    </script>
+
+    <style>
+        #app {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+        .toggle {
+            cursor: pointer;
+        }
+        img {
+            height: 15px;
+            cursor: pointer;
+        }
+
+        .details .detail-item {
+            display: inline-block;
+            text-align: right;
+            margin: 0 10px;
+        }
+        .details .value, .details .label {
+            display: block;
+        }
+        .details .label {
+            transition: height ease-in 200ms;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+        }
+        .details .label.visible {
+            width: auto;
+            height: 20px;
+        }
+
+        .speed {
+            display: inline-block;
+            border: 1px solid black;
+            height: 15px;
+            width: 100px;
+            padding: 0;
+        }
+        .speed-mark {
+            border-right: 4px solid black;
+            width: 0;
+            height: 15px;
+            display: inline-block;
+            overflow: hidden;
+        }
+        .speed-button {
+            cursor: pointer;
+            display: inline-block;
+
+            width: 15px;
+            height: 15px;
+            line-height: 15px;
+
+            border-radius: 5px;
+
+            text-align: center;
+            vertical-align: baseline;
+
+            background-color: antiquewhite;
+        }
+        .speed-button:hover {
+            background-color: grey;
+            color: white;
+        }
+    </style>
+
+</head>
+<body>
+<div id="app">
+    <div>
+        <span v-on:click="toggleBriefDetail"><img src="../images/question-mark.png"/></span>
+
+        <span class="label" v-if="isBriefDetailView">Hyphae Growing <span v-if="isMature">(done)</span></span>
+
+        <span v-on:click="start" v-if="!isRunning"><img src="../images/play.png" /></span>
+        <span v-on:click="pause" v-else><img src="../images/pause.png" /></span>
+
+        <span v-on:click="stop" v-if="isRunning && !isMature"><img src="../images/stop.png" /></span>
+
+        <div v-if="model" v-on:click="toggleBriefDetail" class="details">
+            <span class="detail-item">
+                <span class="label" v-bind:class="{'visible': isBriefDetailView}">Growing Branches</span>
+                <span class="value">{{model.growingBranchesCount}}</span>
+            </span>
+            <span v-if="!isBriefDetailView">/</span>
+            <span class="detail-item">
+                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Total Branches</span>
+                <span class="value">{{model.growingBranchesCount + model.maturedBranchesCount}}</span>
+            </span>
+            <span v-if="!isBriefDetailView">/</span>
+            <span class="detail-item">
+                <span class="label"  v-bind:class="{'visible': isBriefDetailView}">Hyphae Mass</span>
+                <span class="value">{{model.matrixPixelsCount}}</span>
+            </span>
+        </div>
+
+        <span class="toggle" v-if="isBriefDetailView" v-on:click="toggleFullDetail"><img src="../images/gear.png"/></span>
+    </div>
+    <div v-if="isFullDetailView">
+        <div>Speed:
+            <span class="speed-button decrease" v-on:click="changeControlValue('speed', -1)" v-dblclick-select="0">-</span>
+            <span class="speed" width="100px;">
+                <span class="speed-mark" v-bind:style="{'width': controls.speed.percent + '%'}"></span>
+            </span>
+            <span class="speed-button increase" v-on:click="changeControlValue('speed', 1)" v-dblclick-select="0">+</span>
+        </div>
+        <div>Denser-Rarer:
+            <span class="speed-button decrease" v-on:click="changeControlValue('complexity', -1)" v-dblclick-select="0">-</span>
+            <span class="speed" width="100px;">
+                <span class="speed-mark" v-bind:style="{'width': controls.complexity.percent + '%'}"></span>
+            </span>
+            <span class="speed-button increase" v-on:click="changeControlValue('complexity', 1)" v-dblclick-select="0">+</span>
+        </div>
+    </div>
+
+</div>
+<div id="growth" style="width: 500px; height: 500px;"></div>
+
+<script>
+    HyphaeGrowingCreator().init('#app', '#growth');
+</script>
+</body>
+</html>
