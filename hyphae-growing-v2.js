@@ -319,6 +319,7 @@ function HyphaeGrowing(config, parentEl=false) {
             runningInterval = setInterval(draw, config.timeBetweenGrowth);
         }
         isRunning = model.isRunning = true;
+        callbackEventListeners('started-growing');
     };
 
     const pause = () => {

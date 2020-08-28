@@ -109,6 +109,7 @@ function HyphaeGrowingCreator() {
                     HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
                     HyphaeGrowing.INSTANCE.on('growing', this.updateModel);
                     HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
+                    HyphaeGrowing.INSTANCE.on('started-growing', this.updateModel);
 
                     this.updateConfigFromControls();
                 }
@@ -130,6 +131,7 @@ function HyphaeGrowingCreator() {
             },
             updateModel: function() {
                 this.model = HyphaeGrowing.INSTANCE.getModel();
+                this.isRunning = this.model.isRunning;
             },
             onDoneGrowing: function() {
                 this.isMature = true;
