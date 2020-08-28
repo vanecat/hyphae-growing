@@ -1,3 +1,5 @@
 .idea/
 vue*.js
 images/
+dist/
+external/
