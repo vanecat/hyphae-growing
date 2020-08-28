@@ -103,7 +103,8 @@ function HyphaeGrowingCreator() {
 
                 if (!HyphaeGrowing.INSTANCE) {
                     // grab a random favorite config
-                    this.config = HyphaeGrowing.getRandomFavoriteConfig();
+                    //this.config = HyphaeGrowing.getRandomFavoriteConfig();
+                    this.config = HyphaeGrowing.favoriteConfigs[0];
 
                     HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
                     HyphaeGrowing.INSTANCE.on('branch-grown', this.updateModel);
