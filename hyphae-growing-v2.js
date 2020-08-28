@@ -263,13 +263,16 @@ function HyphaeGrowing(config, parentEl=false) {
             clearInterval(runningInterval);
         }
 
-        eventListeners = {};
         growingBranches.splice(0);
         growthMatrix = {};
 
         canvasContext.clearRect(0, 0, width, height);
         isRunning = model.isRunning = false;
         isInit = model.isInit = false;
+
+        model.maturedBranchesCount = 0;
+        model.growingBranchesCount = 0;
+        model.matrixPixelsCount = 0;
     };
 
     const startPause = () => {
