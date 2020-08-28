@@ -275,6 +275,16 @@ function HyphaeGrowing(config, parentEl=false) {
         model.matrixPixelsCount = 0;
     };
 
+    const destroy = () => {
+        stop();
+
+        eventListeners = {};
+        window.removeEventListener('resize', setBoundsAndStartPos);
+        canvasEl.addEventListener('click', restartOnCanvasClick);
+        parentEl.removeChild(canvasEl);
+        HyphaeGrowing.INSTANCE = null;
+    };
+
     const startPause = () => {
         if (!HyphaeGrowing.INSTANCE) {
             return;
