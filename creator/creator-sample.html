@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="../pre-init-styles.js"></script>
     <script src="../hyphae-growing-v2.js"></script>
     <script src="vue.js"></script>
     <script src="creator.js"></script>
+    <script>
+        HyphaeGrowingCreator.addPreInitStyles('#app');
+    </script>
+
     <style>
         #app {
             position: fixed;
@@ -73,6 +78,7 @@
             color: white;
         }
     </style>
+
 </head>
 <body>
 <div id="app">
@@ -126,7 +132,7 @@
 <div id="growth" style="width: 500px; height: 500px;"></div>
 
 <script>
-    HyphaeGrowingCreator().init('#growth');
+    HyphaeGrowingCreator().init('#app', '#growth');
 </script>
 </body>
 </html>

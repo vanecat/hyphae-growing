@@ -49,7 +49,7 @@ function HyphaeGrowingCreator() {
     };
 
     const vueAppConfig  = {
-        el: '#app',
+        el: '',
         data: {
             model: false,
             isRunning: false,
@@ -57,7 +57,7 @@ function HyphaeGrowingCreator() {
             isFullDetailView: false,
             isBriefDetailView: false,
             config: {},
-            hyphaeContainerEl: '',
+            hyphaeContainerSelector: '',
             controls: {
                 speed: {
                     value: 6,
@@ -72,14 +72,21 @@ function HyphaeGrowingCreator() {
             }
         },
         mounted: function() {
-            if (!this.hyphaeContainerEl) {
+            if (!this.hyphaeContainerSelector) {
                 throw new Error('hyphage growth creator: no container element');
             }
+            const self = this;
+
             this.$nextTick(function () {
                 //RE-INIT WF as Vue.js init breaks WF interactions
                 //Webflow.destroy();
                 //Webflow.ready();
                 //Webflow.require('ix2').init();
+
+                setTimeout(function () {
+                    self.start();
+                    self.$el.classList.toggle(HyphaeGrowingCreator.LOADED_CLASS, true);
+                },500);
             });
         },
         methods: {
@@ -106,7 +113,7 @@ function HyphaeGrowingCreator() {
                     //this.config = HyphaeGrowing.getRandomFavoriteConfig();
                     this.config = HyphaeGrowing.favoriteConfigs[0];
 
-                    HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
+                    HyphaeGrowing(this.config, this.hyphaeContainerSelector, true);
                     HyphaeGrowing.INSTANCE.on('growing', this.updateModel);
                     HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
                     HyphaeGrowing.INSTANCE.on('started-growing', this.updateModel);
@@ -189,7 +196,7 @@ function HyphaeGrowingCreator() {
     };
 
     let isInit = false;
-    const init = (hyphaeContainerEl) => {
+    const init = (appElSelector, hyphaeContainerSelector) => {
         if (isInit) {
             return;
         }
@@ -202,7 +209,8 @@ function HyphaeGrowingCreator() {
             const [name, config] = entry;
             Vue.directive(name, config);
         });
-        vueAppConfig.data.hyphaeContainerEl = hyphaeContainerEl;
+        vueAppConfig.el = appElSelector;
+        vueAppConfig.data.hyphaeContainerSelector = hyphaeContainerSelector;
         HyphaeGrowingCreator.INSTANCE.vue = new Vue(vueAppConfig);
         isInit = true;
     };
@@ -214,3 +222,11 @@ function HyphaeGrowingCreator() {
 
     return HyphaeGrowingCreator.INSTANCE;
 }
+HyphaeGrowingCreator.LOADED_CLASS = 'loaded';
+HyphaeGrowingCreator.addPreInitStyles = (appElSelector) => {
+    if (window.HyphaePreInitStyles) {
+        const stylesheet = HyphaePreInitStyles();
+        stylesheet.add(appElSelector, 'opacity: 0; transition: opacity ease-out 2500ms;');
+        stylesheet.add(`${appElSelector}.${HyphaeGrowingCreator.LOADED_CLASS}`, 'opacity: 1;');
+    }
+};
