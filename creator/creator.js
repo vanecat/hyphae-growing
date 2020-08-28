@@ -133,6 +133,7 @@ function HyphaeGrowingCreator() {
             onDoneGrowing: function() {
                 this.isMature = true;
                 this.isRunning = false;
+                this.updateModel();
             },
             toggleFullDetail: function(e) {
                 this.isFullDetailView = !this.isFullDetailView;
