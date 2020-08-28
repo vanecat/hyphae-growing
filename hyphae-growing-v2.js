@@ -132,14 +132,14 @@ function HyphaeGrowing(config, parentEl=false) {
 
                 const growthLength = config.growthLengthMin + Math.ceil(Math.random() * config.growthLengthMax);
                 if (config.allowBranchOverlap) {
-                    x1 = Math.ceil( config.pixelPrecision * (x + growthLength * Math.cos(newAngle)) ) / config.pixelPrecision;
-                    y1 = Math.ceil( config.pixelPrecision * (y + growthLength * Math.sin(newAngle)) ) / config.pixelPrecision;
+                    x1 = Math.round(x + (i * Math.cos(newAngle)));
+                    y1 = Math.round(y + (i * Math.sin(newAngle)));
                     hasGrownBranch = isWithinBounds(x1, y1);
                 } else {
                     let isFirstGrowthIncrement = true;
                     for(let i = config.growthLengthIncrement; i <= growthLength; i+=config.growthLengthIncrement) {
-                        x1 = Math.ceil( config.pixelPrecision * (x + i * Math.cos(newAngle)) ) / config.pixelPrecision;
-                        y1 = Math.ceil( config.pixelPrecision * (y + i * Math.sin(newAngle)) ) / config.pixelPrecision;
+                        x1 = Math.round(x + (i * Math.cos(newAngle)));
+                        y1 = Math.round(y + (i * Math.sin(newAngle)));
 
                         if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinHyphalCircle(x1, y1) || !isWithinBounds(x1, y1)) {
                             // no growth (bumped into other branch/frame edge on 1st try)
