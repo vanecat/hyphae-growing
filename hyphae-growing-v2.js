@@ -116,6 +116,9 @@ function HyphaeGrowing(config, parentEl=false) {
             angle = Math.floor(Math.random() * 360);
         }
         let x0 = null, y0 = null; // save previous start coordinates to make rendered canvase lines smoother (see drawLine)
+
+        const parentsAngles = [];
+
         let potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
         let attemptedBranchCount = 0;
         let growthCyclesWithoutBranching = 0;
@@ -128,7 +131,26 @@ function HyphaeGrowing(config, parentEl=false) {
             let hasGrownBranch = false;
             for(let ai = 0; ai < (config.allowBranchOverlap ? 1 : config.branchGrowthMaxAttempts); ai++) {
                 // the new angle should add be [-angleDelta/2, +angleDelta/2]
-                newAngle = angle + (-1 * (config.angleDeltaRange/2)) + Math.random() * config.angleDeltaRange;
+                newAngle = angle + Math.floor((Math.random() * config.angleDeltaRange) - (config.angleDeltaRange/2));
+
+                if (config.branchAngleAncestralMemory) {
+                    let parentsAngleWeight = 1;
+                    let parentsAngleWeightsSum = config.branchAngleAncestralMemory;
+                    let newAngleWithParentsInMind = newAngle * config.branchAngleAncestralMemory;
+                    parentsAngles.forEach((parentAngle) => {
+                        newAngleWithParentsInMind += (parentAngle * parentsAngleWeight);
+                        parentsAngleWeightsSum += parentsAngleWeight;
+                        parentsAngleWeight++;
+                    });
+                    newAngleWithParentsInMind = newAngleWithParentsInMind / parentsAngleWeightsSum;
+                    parentsAngles.unshift(newAngleWithParentsInMind);
+                    if (parentsAngles.length > config.branchAngleAncestralMemory) {
+                        parentsAngles.pop();
+                    }
+
+                    newAngle = newAngleWithParentsInMind;
+                }
+
 
                 const growthLength = config.growthLengthMin + Math.ceil(Math.random() * config.growthLengthMax);
                 if (config.allowBranchOverlap) {
@@ -392,8 +414,9 @@ Sample config
 HyphaeGrowing.favoriteConfigs = [
     {
         lineColor: 'rgb(176, 137, 37)',
+        branchAngleAncestralMemory: 3,
         pBranchOff : 0.3,
-        pBranchRandomDeath : 0.0,
+        pBranchRandomDeath : 0.01,
         growthLengthMin : 2,
         growthLengthMax : 4,
         growthLengthIncrement : 2,
@@ -407,6 +430,7 @@ HyphaeGrowing.favoriteConfigs = [
     },
     {
         lineColor: 'rgb(176, 137, 37)',
+        branchAngleAncestralMemory: 0,
         pBranchOff : 0.4,
         pBranchRandomDeath : 0.05,
         growthLengthMin : 2,
@@ -422,6 +446,7 @@ HyphaeGrowing.favoriteConfigs = [
     },
     {
         lineColor: 'rgb(176, 137, 37)',
+        branchAngleAncestralMemory: 0,
         pBranchOff : 0.3,
         pBranchRandomDeath : 0.0,
         growthLengthMin : 2,
