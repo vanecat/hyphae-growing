@@ -18,14 +18,14 @@ function HyphaeGrowingCreator() {
 
 
     const vueComponents = {};
-    vueComponents['layer-control'] = {
+    vueComponents['sample-component'] = {
         props: ['model'],
         data: function () {
             return {
             }
         },
         //template: '<div v-bind:class="classes()" v-on:click.prevent.stop="onClick"><slot></slot></div>',
-        template: getVueTemplate('layer-control'),
+        template: getVueTemplate('sample-component'),
         methods: {
             classes: function() {
 
