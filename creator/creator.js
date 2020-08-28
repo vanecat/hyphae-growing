@@ -67,7 +67,7 @@ function HyphaeGrowingCreator() {
                 complexity: {
                     value: 6,
                     percent: 60,
-                    valueMap: { "1": "25,2,2,4", "2": "30,2,2,6",  "3": "35,3,3,7", "4":"40,3,4,8", "5": "45,5,5,9", "6": "50,7,6,10", "7": "55,10,7,11", "8": "60,10,8,12", "9": "70,20,9,13"}
+                    valueMap: { "1": "45,8,1,2,2,4", "2": "35,7,2,2,2,4",  "3": "35,7,2,2,2,6", "4":"35,5,3,3,3,6", "5": "35,5,3,3,3,9", "6": "35,5,4,4,4,12", "7": "35,5,4,4,4,16", "8": "35,5,5,5,5,15", "9": "35,5,6,6,6,18"}
                 }
             }
         },
@@ -156,9 +156,11 @@ function HyphaeGrowingCreator() {
                 this.config.timeBetweenGrowth = this.controls.speed.valueMap[String(this.controls.speed.value)];
 
                 const complexity = this.controls.complexity.valueMap[String(this.controls.complexity.value)];
-                const [angle, maxBranches, growthLengthMin, growthLengthMax] = complexity.split(',');
+                const [angle, maxBranches, nearbyRadius, growthLengthIncrement, growthLengthMin, growthLengthMax] = complexity.split(',');
                 this.config.angleDeltaRange = parseInt(angle);
                 this.config.branchMaxCount = parseInt(maxBranches);
+                this.config.nearbyRadius = parseInt(nearbyRadius);
+                this.config.growthLengthIncrement = parseInt(growthLengthIncrement);
                 this.config.growthLengthMax = parseInt(growthLengthMin);
                 this.config.growthLengthMin = parseInt(growthLengthMax);
             },
