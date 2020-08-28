@@ -107,7 +107,7 @@ function HyphaeGrowingCreator() {
                     this.config = HyphaeGrowing.favoriteConfigs[0];
 
                     HyphaeGrowing(this.config, this.hyphaeContainerEl, true);
-                    HyphaeGrowing.INSTANCE.on('branch-grown', this.updateModel);
+                    HyphaeGrowing.INSTANCE.on('growing', this.updateModel);
                     HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
 
                     this.updateConfigFromControls();

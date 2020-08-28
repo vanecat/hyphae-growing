@@ -233,7 +233,7 @@ function HyphaeGrowing(config, parentEl=false) {
         model.growingBranchesCount = growingBranches.length;
         model.matrixPixelsCount = Object.keys(growthMatrix).length;
 
-        callbackEventListeners('branch-grown');
+        callbackEventListeners('growing');
 
         if (!isRunning) {
             if (runningInterval) {
