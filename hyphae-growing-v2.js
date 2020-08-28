@@ -133,14 +133,35 @@ function HyphaeGrowing(config, parentEl=false) {
                 // the new angle should add be [-angleDelta/2, +angleDelta/2]
                 newAngle = angle + Math.floor((Math.random() * config.angleDeltaRange) - (config.angleDeltaRange/2));
 
+                // consider ancestors branch angles (you just don't grow in a random new angle you want)
+                //   you start growing based on where your mom, grandma, great-grandma grew
+                //   IMPORTANT:  all angles of ancestors weighs are REVERSE (most important is the farthest ancestor)
+                //              parent: weight=1, grandparent=2, great-grandparent=3, etc.
+                //              current new angle weight = max ancestral memory weight
+                //                 (HENCE: still pretty important
+                //                  where you decide to grow yourself = as important as your )
                 if (config.branchAngleAncestralMemory) {
-                    let parentsAngleWeight = 1;
-                    let parentsAngleWeightsSum = config.branchAngleAncestralMemory;
-                    let newAngleWithParentsInMind = newAngle * config.branchAngleAncestralMemory;
+                    let parentsAngleWeight = 1; // all generations weights equal
+                    if (config.branchAngleAncestralMemoryMostWeightOn === 'closest') {
+                        // closest parent (and myself) are most important
+                        parentsAngleWeight = config.branchAngleAncestralMemory;
+                    } else if (config.branchAngleAncestralMemoryMostWeightOn === 'farthest') {
+                        // farthest ancestors are most important
+                        parentsAngleWeight = 1;
+                    }
+
+                    let parentsAngleWeightsSum = parentsAngleWeight;
+                    let newAngleWithParentsInMind = newAngle * parentsAngleWeight;
                     parentsAngles.forEach((parentAngle) => {
                         newAngleWithParentsInMind += (parentAngle * parentsAngleWeight);
                         parentsAngleWeightsSum += parentsAngleWeight;
-                        parentsAngleWeight++;
+                        if (config.branchAngleAncestralMemoryMostWeightOn === 'closest') {
+                            // closest parent (and myself) are most important
+                            parentsAngleWeight--;
+                        } else if (config.branchAngleAncestralMemoryMostWeightOn === 'farthest') {
+                            // farthest ancestors are most important
+                            parentsAngleWeight++;
+                        }
                     });
                     newAngleWithParentsInMind = newAngleWithParentsInMind / parentsAngleWeightsSum;
                     parentsAngles.unshift(newAngleWithParentsInMind);
@@ -149,6 +170,7 @@ function HyphaeGrowing(config, parentEl=false) {
                     }
 
                     newAngle = newAngleWithParentsInMind;
+                    console.log(parentsAngles);
                 }
 
 
@@ -414,9 +436,10 @@ Sample config
 HyphaeGrowing.favoriteConfigs = [
     {
         lineColor: 'rgb(176, 137, 37)',
-        branchAngleAncestralMemory: 3,
-        pBranchOff : 0.3,
-        pBranchRandomDeath : 0.01,
+        branchAngleAncestralMemory: 2,
+        branchAngleAncestralMemoryMostWeightOn: 'closest',
+        pBranchOff : 0.4,
+        pBranchRandomDeath : 0,
         growthLengthMin : 2,
         growthLengthMax : 4,
         growthLengthIncrement : 2,
