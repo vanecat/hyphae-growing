@@ -436,8 +436,8 @@ HyphaeGrowing.favoriteConfigs = [
     {
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 2,
-        branchAngleAncestralMemoryMostWeightOn: 'equal',
-        pBranchOff : 0.4,
+        branchAngleAncestralMemoryMostWeightOn: 'closest',
+        pBranchOff : 0.3,
         pBranchRandomDeath : 0,
         growthLengthMin : 2,
         growthLengthMax : 4,
