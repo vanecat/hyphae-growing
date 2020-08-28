@@ -36,9 +36,21 @@ function HyphaeGrowing(config, parentEl=false) {
     const canvasContext = canvasEl.getContext("2d");
     canvasContext.strokeStyle = config.lineColor || 'black';
 
-    const drawLine = (x1, y1, x0,y0) => {
+    const drawLine = (x1, y1, x, y, x0, y0) => {
         canvasContext.beginPath();
-        canvasContext.moveTo(x0, y0);
+        canvasContext.lineWidth = Math.min(config.nearbyRadius || config.growthLengthIncrement, 3);
+        canvasContext.lineJoin = "round";
+
+        // if previous start coordinates exist: rendered canvas line smoother
+        //   by re-drawing previous line and then drawing current one
+        if (x0 !== null) {
+            // previous line
+            canvasContext.moveTo(x0, y0);
+            canvasContext.lineTo(x, y);
+        } else {
+            // current line prep
+            canvasContext.moveTo(x, y);
+        }
         canvasContext.lineTo(x1, y1);
         canvasContext.stroke();
     };
@@ -83,8 +95,10 @@ function HyphaeGrowing(config, parentEl=false) {
     };
 
     const arePointsNearbyOccupied = (x,y, x0, y0) => {
-        for(let xi=-1; xi<=1; xi++) {
-            for(let yi=-1; yi<=1; yi++) {
+        // nearby radius is either the explicit config prop or the growth increment
+        const r = config.nearbyRadius || config.growthLengthIncrement;
+        for(let xi=-1*r; xi<=r; xi++) {
+            for(let yi=-1*r; yi<=r; yi++) {
                 if (xi + x === x0 && yi + y === y0) {
                     continue;
                 }
@@ -101,7 +115,7 @@ function HyphaeGrowing(config, parentEl=false) {
             // initial angle is random
             angle = Math.floor(Math.random() * 360);
         }
-
+        let x0 = null, y0 = null; // save previous start coordinates to make rendered canvase lines smoother (see drawLine)
         let potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
         let attemptedBranchCount = 0;
         let growthCyclesWithoutBranching = 0;
@@ -154,7 +168,7 @@ function HyphaeGrowing(config, parentEl=false) {
             attemptedBranchCount++;
 
             if (hasGrownBranch) {
-                drawLine(x1, y1, x, y);
+                drawLine(x1, y1, x, y, x0, y0);
                 if (Math.random() < config.pBranchOff) {
                     // Create a new growing point from tip of branch and current angle
                     return Growth(x1, y1, newAngle);
@@ -162,6 +176,8 @@ function HyphaeGrowing(config, parentEl=false) {
                     potentialBranchCount = Math.ceil(Math.random() * config.branchMaxCount);
                     attemptedBranchCount = 0;
                     growthCyclesWithoutBranching++;
+                    x0 = x; // save previous start coordinates to make rendered canvase lines smoother (see drawLine)
+                    y0 = y;
                     x = x1;
                     y = y1;
                 }
