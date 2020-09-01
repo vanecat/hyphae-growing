@@ -29,15 +29,13 @@ function HyphaeGrowing(config, parentEl=false) {
         canvasEl.width = width;
         canvasEl.height = height;
     };
-    setBoundsAndStartPos();
-    window.addEventListener('resize', setBoundsAndStartPos);
 
     parentEl.appendChild(canvasEl);
     const canvasContext = canvasEl.getContext("2d");
-    canvasContext.strokeStyle = config.lineColor || 'black';
 
     const drawLine = (x1, y1, x, y, x0, y0) => {
         canvasContext.beginPath();
+        canvasContext.strokeStyle = config.lineColor || 'black';
         canvasContext.lineWidth = Math.min(config.nearbyRadius || config.growthLengthIncrement, 3);
         canvasContext.lineJoin = "round";
 
@@ -324,7 +322,16 @@ function HyphaeGrowing(config, parentEl=false) {
 
     const init = () => {
         isInit = model.isInit = true;
+
+        setBoundsAndStartPos();
         growingBranches.push(Growth(startPos.x, startPos.y));
+
+        window.addEventListener('resize', onWindowResize);
+    };
+
+    const onWindowResize = () => {
+        stop();
+        start();
     };
 
     const stop = () => {
@@ -335,6 +342,8 @@ function HyphaeGrowing(config, parentEl=false) {
         if (runningInterval) {
             clearInterval(runningInterval);
         }
+
+        window.removeEventListener('resize', onWindowResize);
 
         growingBranches.splice(0);
         growthMatrix = {};
@@ -352,7 +361,7 @@ function HyphaeGrowing(config, parentEl=false) {
         stop();
 
         eventListeners = {};
-        window.removeEventListener('resize', setBoundsAndStartPos);
+        window.removeEventListener('resize', onWindowResize);
         canvasEl.addEventListener('click', restartOnCanvasClick);
         parentEl.removeChild(canvasEl);
         HyphaeGrowing.INSTANCE = null;
