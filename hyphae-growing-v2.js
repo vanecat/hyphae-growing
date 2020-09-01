@@ -184,8 +184,11 @@ function HyphaeGrowing(config, parentEl=false) {
                         x1 = Math.round(x + (i * Math.cos(newAngle)));
                         y1 = Math.round(y + (i * Math.sin(newAngle)));
 
-                        if (arePointsNearbyOccupied(x1,y1, x,y) || !isWithinHyphalCircle(x1, y1) || !isWithinBounds(x1, y1)) {
-                            // no growth (bumped into other branch/frame edge on 1st try)
+                        if (arePointsNearbyOccupied(x1,y1, x,y) || (config.frameMode === 'circle' && !isWithinHyphalCircle(x1, y1)) || !isWithinBounds(x1, y1)) {
+                            // cannot grow that direction:
+                            //   1. bumped into other branch  OR
+                            //   2. bumped into the hyphae circle frame (if in circle-frame mode)    OR
+                            //   3. bumped into the outer rectangle bounds of canvas
                             if (isFirstGrowthIncrement) {
                                 //console.log('hit other growth too soon');
                                 break;
@@ -437,18 +440,19 @@ HyphaeGrowing.favoriteConfigs = [
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 2,
         branchAngleAncestralMemoryMostWeightOn: 'closest',
-        pBranchOff : 0.3,
-        pBranchRandomDeath : 0,
+        pBranchOff : 0.3, // .4
+        pBranchRandomDeath : 0, // values 0.01 - 0.05 seem to be good
         growthLengthMin : 2,
         growthLengthMax : 4,
         growthLengthIncrement : 2,
         allowBranchOverlap : false,
         timeBetweenGrowth : 10,
-        angleDeltaRange : 25,
-        branchMaxCount : 4,
+        angleDeltaRange : 25, // values 20 - 60 seem to work best
+        branchMaxCount : 4, // values 4-8 seem to work well
         branchGrowthMaxAttempts : 10,
         pixelPrecision : 1,
-        restartAtClickPosition: true
+        restartAtClickPosition: true,
+        frameMode: 'rectangle'
     },
     {
         lineColor: 'rgb(176, 137, 37)',
