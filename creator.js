@@ -76,6 +76,7 @@ function HyphaeGrowingCreator() {
                 throw new Error('hyphage growth creator: no container element');
             }
             const self = this;
+            this.$el.classList.toggle(HyphaeGrowingCreator.HIDDEN_CLASS, false);
 
             this.$nextTick(function () {
                 //RE-INIT WF as Vue.js init breaks WF interactions
@@ -231,6 +232,7 @@ function HyphaeGrowingCreator() {
     return HyphaeGrowingCreator.INSTANCE;
 }
 HyphaeGrowingCreator.LOADED_CLASS = 'loaded';
+HyphaeGrowingCreator.HIDDEN_CLASS = 'hidden';
 HyphaeGrowingCreator.addPreInitStyles = (appElSelector) => {
     if (window.HyphaePreInitStyles) {
         const stylesheet = HyphaePreInitStyles();
