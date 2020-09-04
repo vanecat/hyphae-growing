@@ -16,6 +16,7 @@ function HyphaeGrowing(config, parentEl=false) {
     let width = null;
     let height = null;
     let startPos = null;
+    let isStartPosCustomSet = false;
     let hyphalRadius = null;
 
     const setBoundsAndStartPos = () => {
@@ -25,7 +26,9 @@ function HyphaeGrowing(config, parentEl=false) {
 
         // smaller of the two dimensions of canvas - a buffer
         hyphalRadius = Math.min(width, height)/2 - 20;
-        startPos = {x: width/2, y: height/2};
+        if (!isStartPosCustomSet) {
+            startPos = {x: width/2, y: height/2};
+        }
         canvasEl.width = width;
         canvasEl.height = height;
     };
@@ -80,6 +83,7 @@ function HyphaeGrowing(config, parentEl=false) {
         stop();
         const canvasBounds = canvasEl.getBoundingClientRect();
         startPos = {x: e.x - canvasBounds.x, y: e.y - canvasBounds.y};
+        isStartPosCustomSet = true;
         start();
     };
 
@@ -355,6 +359,8 @@ function HyphaeGrowing(config, parentEl=false) {
         model.maturedBranchesCount = 0;
         model.growingBranchesCount = 0;
         model.matrixPixelsCount = 0;
+
+        isStartPosCustomSet = false;
     };
 
     const destroy = () => {
