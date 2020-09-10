@@ -334,8 +334,12 @@ function HyphaeGrowing(config, parentEl=false) {
     };
 
     const onWindowResize = () => {
+        const wasRunning = isRunning;
         stop();
-        start();
+
+        if (wasRunning) {
+            start();
+        }
     };
 
     const stop = () => {
