@@ -110,9 +110,11 @@ function HyphaeGrowingCreator() {
                 }
 
                 if (!HyphaeGrowing.INSTANCE) {
-                    // grab a random favorite config
-                    //this.config = HyphaeGrowing.getRandomFavoriteConfig();
-                    this.config = HyphaeGrowing.favoriteConfigs[0];
+                    // base config
+                    const config = Object.assign({}, HyphaeGrowing.favoriteConfigs[0]);
+
+                    // config overrides
+                    Object.assign(config, this.config);
 
                     HyphaeGrowing(this.config, this.hyphaeContainerSelector, true);
                     HyphaeGrowing.INSTANCE.on('growing', this.updateModel);
@@ -197,7 +199,7 @@ function HyphaeGrowingCreator() {
     };
 
     let isInit = false;
-    const init = (appElSelector, hyphaeContainerSelector) => {
+    const init = (appElSelector, hyphaeContainerSelector, customConfigOverrides={}) => {
         if (isInit) {
             return;
         }
@@ -220,6 +222,7 @@ function HyphaeGrowingCreator() {
             throw Error(err);
         };
 
+        vueAppConfig.data.config = Object.assign(customConfigOverrides, vueAppConfig.data.config);
         HyphaeGrowingCreator.INSTANCE.vue = new Vue(vueAppConfig);
         isInit = true;
     };
