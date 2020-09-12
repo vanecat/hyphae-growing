@@ -87,9 +87,6 @@ function HyphaeGrowing(config, parentEl=false) {
         start();
     };
 
-    if (config.restartAtClickPosition) {
-        canvasEl.addEventListener('click', restartOnCanvasClick);
-    }
     // Point at which the hyphae grows
     let growthMatrix = {};
     const isPointOccupied = (x,y) => {
@@ -372,7 +369,8 @@ function HyphaeGrowing(config, parentEl=false) {
 
         eventListeners = {};
         window.removeEventListener('resize', onWindowResize);
-        canvasEl.addEventListener('click', restartOnCanvasClick);
+        canvasEl.removeEventListener('click', restartOnCanvasClick);
+        canvasEl.removeEventListener('click', startPause);
         parentEl.removeChild(canvasEl);
         HyphaeGrowing.INSTANCE = null;
     };
@@ -423,11 +421,11 @@ function HyphaeGrowing(config, parentEl=false) {
         return Object.freeze(clientModel);
     };
 
-    if (config.startPauseOnClick) {
-        canvasEl.addEventListener('click', () => {
-            // mouse click/tap
-            startPause();
-        });
+
+    if (config.restartAtClickPosition) {
+        canvasEl.addEventListener('click', restartOnCanvasClick);
+    } else if (config.startPauseOnClick) {
+        canvasEl.addEventListener('click', startPause);
     }
 
     HyphaeGrowing.INSTANCE = {
