@@ -9,11 +9,6 @@
     </script>
 
     <style>
-        #app {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-        }
         .toggle {
             cursor: pointer;
         }
@@ -74,6 +69,22 @@
             background-color: grey;
             color: white;
         }
+
+        #growth {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            cursor: nw-resize;
+        }
+        #growth #cta {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 330px;
+            background: white;
+            border-radius: 10px;
+            padding: 3px;
+        }
     </style>
 
 </head>
@@ -126,10 +137,12 @@
     </div>
 
 </div>
-<div id="growth" style="width: 500px; height: 500px;"></div>
+<div id="growth">
+    <div id="cta">Click anywhere to (re)start growing the Hyphae!</div>
+</div>
 
 <script>
-    HyphaeGrowingCreator().init('#app', '#growth');
+    HyphaeGrowingCreator().init('#app', '#growth', {autoStart: true, restartAtClickPosition: true, clickCtaClicksLeft: 4, clickCtaEl: '#cta'});
 </script>
 </body>
 </html>
