@@ -85,8 +85,25 @@ function HyphaeGrowingCreator() {
                 //Webflow.require('ix2').init();
 
                 setTimeout(function () {
-                    self.start();
+                    // base config
+                    const config = Object.assign({}, HyphaeGrowing.favoriteConfigs[0]);
+
+                    // config overrides
+                    Object.assign(config, self.config);
+
+                    HyphaeGrowing(self.config, self.hyphaeContainerSelector, true);
+                    HyphaeGrowing.INSTANCE.on('growing', self.updateModel);
+                    HyphaeGrowing.INSTANCE.on('done-growing', self.onDoneGrowing);
+                    HyphaeGrowing.INSTANCE.on('started-growing', self.updateModel);
+
+                    self.updateConfigFromControls();
+
                     self.$el.classList.toggle(HyphaeGrowingCreator.LOADED_CLASS, true);
+
+                    if (config.autoStart) {
+                        self.start();
+                    }
+
                 },500);
             });
         },
@@ -107,21 +124,6 @@ function HyphaeGrowingCreator() {
             start: function() {
                 if (this.isMature) {
                     this.stop();
-                }
-
-                if (!HyphaeGrowing.INSTANCE) {
-                    // base config
-                    const config = Object.assign({}, HyphaeGrowing.favoriteConfigs[0]);
-
-                    // config overrides
-                    Object.assign(config, this.config);
-
-                    HyphaeGrowing(this.config, this.hyphaeContainerSelector, true);
-                    HyphaeGrowing.INSTANCE.on('growing', this.updateModel);
-                    HyphaeGrowing.INSTANCE.on('done-growing', this.onDoneGrowing);
-                    HyphaeGrowing.INSTANCE.on('started-growing', this.updateModel);
-
-                    this.updateConfigFromControls();
                 }
                 HyphaeGrowing.INSTANCE.start();
                 this.isRunning = true;
