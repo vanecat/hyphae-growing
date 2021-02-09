@@ -4,7 +4,11 @@ function makeHyphaeGrowingJs {
 
     echo > $jsFile
 
-    cat ./external/vue.js >> $jsFile && echo >> $jsFile
+    if [ "$1" = "prod" ]; then
+        cat ./external/vue.min.js >> $jsFile && echo >> $jsFile
+    else
+        cat ./external/vue.js >> $jsFile && echo >> $jsFile
+    fi
 
     cat ./pre-init-styles.js >> $jsFile && echo >> $jsFile
 
@@ -12,4 +16,4 @@ function makeHyphaeGrowingJs {
 
     cat ./creator.js >> $jsFile && echo >> $jsFile
 }
-makeHyphaeGrowingJs;
+makeHyphaeGrowingJs $1;
