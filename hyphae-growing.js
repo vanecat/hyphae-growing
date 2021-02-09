@@ -103,6 +103,10 @@ function HyphaeGrowing(config, parentEl=false) {
         if (clickCtaEl && clickCtaClicksLeft) {
             clickCtaEl.style.left = `${startPos.x}px`;
             clickCtaEl.style.top = `${startPos.y}px`;
+            // force the element width to 'auto'
+            //  as it might have been set to some init value first
+            //  we dont want the original width as we are positioning it to the mouse click
+            clickCtaEl.style.width = 'auto';
         }
         start();
     };
