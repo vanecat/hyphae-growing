@@ -454,6 +454,7 @@ Sample config
 */
 HyphaeGrowing.favoriteConfigs = [
     {
+        autoStart: false,
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 2,
         branchAngleAncestralMemoryMostWeightOn: 'closest',
@@ -472,6 +473,7 @@ HyphaeGrowing.favoriteConfigs = [
         frameMode: 'rectangle'
     },
     {
+        autoStart: false,
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 0,
         pBranchOff : 0.4,
@@ -488,6 +490,7 @@ HyphaeGrowing.favoriteConfigs = [
         restartAtClickPosition: true
     },
     {
+        autoStart: false,
         lineColor: 'rgb(176, 137, 37)',
         branchAngleAncestralMemory: 0,
         pBranchOff : 0.3,
