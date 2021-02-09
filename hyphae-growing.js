@@ -19,6 +19,18 @@ function HyphaeGrowing(config, parentEl=false) {
     let isStartPosCustomSet = false;
     let hyphalRadius = null;
 
+    // init "click to start hyphae" CTA text/button
+    let clickCtaEl = null;
+    if (config.clickCtaEl) {
+        clickCtaEl = (typeof config.clickCtaEl === 'string') ? document.querySelector(config.clickCtaEl) : config.clickCtaEl;
+        // if somehow element is not found/not init, even though it exists in config, let's alert the dev via console
+        if (!clickCtaEl) {
+            console.error('"click to start hyphae" CTA text/button is missing', config.clickCtaEl);
+        }
+    }
+    // how many clicks before we should hide the"click to start hyphae" CTA text/button
+    let clickCtaClicksLeft = config.clickCtaClicksLeft || 3;
+
     const setBoundsAndStartPos = () => {
         const parentStyle = window.getComputedStyle(parentEl);
         width = parseInt(parentStyle.width);
@@ -84,6 +96,14 @@ function HyphaeGrowing(config, parentEl=false) {
         const canvasBounds = canvasEl.getBoundingClientRect();
         startPos = {x: e.x - canvasBounds.x, y: e.y - canvasBounds.y};
         isStartPosCustomSet = true;
+
+        // if "click to start hyphae" CTA text/button is enabled & present
+        //  and there are CTA clicks left, re-position the CTA
+        //  NOTE: for positioning to work propertly, element must be "position: absolute"
+        if (clickCtaEl && clickCtaClicksLeft) {
+            clickCtaEl.style.left = `${startPos.x}px`;
+            clickCtaEl.style.top = `${startPos.y}px`;
+        }
         start();
     };
 
@@ -397,6 +417,18 @@ function HyphaeGrowing(config, parentEl=false) {
         if (!isRunning) {
             runningInterval = setInterval(draw, config.timeBetweenGrowth);
         }
+
+        // if "click to start hyphae" CTA text/button is enabled & present
+        if (clickCtaEl) {
+            // Decrement CTA clicks left
+            if (clickCtaClicksLeft) {
+                clickCtaClicksLeft--;
+            } else {
+                // at 0 clicks left, hide the CTA
+                clickCtaEl.style.display = 'none'
+            }
+        }
+
         isRunning = model.isRunning = true;
         callbackEventListeners('started-growing');
     };
